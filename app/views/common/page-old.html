@@ -1,0 +1,26 @@
+<ul class="pagination pagination-sm" style="margin: 0;">
+    <!--<li ng-repeat="pageno in pages" ng-class="{'active':pageno==currentPage}">-->
+        <!--<a href="" ng-click="setCurrentPage(pageno)" ng-class="{'page-active':pageno==currentPage}"-->
+           <!--style="margin: 0 2px !important;">{{pageno}}</a>-->
+    <!--</li>-->
+    <li class="clear-a-bg">
+        <a class="m-r-5 page-current"><span>{{currentPage}}</span></a>
+    </li>
+    <li class="clear-a-bg">
+        <a href="" class="m-r-5" style="padding: 2px 0; border: 0;"> &bull; 1 - {{totalPage}} of {{totalCount}} &bull; </a>
+    </li>
+    <li ng-hide="firstText == null || firstText == '' || firstText == undefined">
+        <a href="" class="m-r-5" ng-click="setCurrentPage(1)">{{firstText}}</a>
+    </li>
+    <li ng-class="{'disabled': currentPage == 1 || currentPage == null || currentPage == '' || currentPage == undefined }">
+        <a href="" class="m-r-5" ng-class="{true: 'page-pre-disabled', false: 'page-pre'}[currentPage == 1]"
+           ng-click="setCurrentPage(currentPage-1)"></a>
+    </li>
+    <li ng-class="{'disabled': currentPage == totalPage || currentPage == null || currentPage == '' || currentPage == undefined }">
+        <a href="" class="m-r-5" ng-class="{true: 'page-next-disabled', false: 'page-next'}[currentPage == totalPage]"
+           ng-click="setCurrentPage(currentPage+1)"></a>
+    </li>
+    <li ng-hide="lastText == null || lastText == '' || lastText == undefined">
+        <a href="" class="m-r-5" ng-click="setCurrentPage(totalPage)">{{lastText}}</a>
+    </li>
+</ul>

@@ -1,0 +1,275 @@
+<!--告警管理-->
+<div class="sds-frame" ng-init="initPage()" style="">
+    <div class="row">
+        <div class="col-sm-12 col-lg-12 col-md-12 col-xs-12" >
+            <button class="btn btn-default" ng-class="{'btn-selected': showTab=='alarm'}" ng-click="showAlarmTab()">告警
+            </button>
+            <button class="btn btn-default" ng-class="{'btn-selected': showTab=='event'}" ng-click="showEventTab()">事件
+            </button>
+            <button class="btn btn-default" ng-class="{'btn-selected': showTab=='log'}" ng-click="showLogTab()">日志收集
+            </button>
+
+            <div style="float: right;" ng-show="showTab=='log'">
+                <button class="btn btn-default " ng-click="goCreateLog()">收集</button>
+                <button class="btn btn-default text-right" ng-click="goDeleteLog()">清除</button>
+            </div>
+            <!--分页控件-->
+            <div ng-show="showTab=='alarm'" class="pull-right">
+                <button class="btn btn-default btn-sm" ng-click="showHandworkModal()" ng-disabled="!systemMode.isNormal">手工清除</button>
+                <div style="margin-top: 5px;float: right;margin-left: 10px;">
+                    <page total-count="page.totalCount" page-count="page.pageSize"
+                          select-size="getAlarmList(pageCount, currentPage)"
+                          current-page="page.currentPage" go-page="getAlarmList(pageCount, currentPage)"></page>
+                </div>
+            </div>
+
+            <div ng-show="showTab=='event'" style="float: right;">
+                <page total-count="eventPage.totalCount" page-count="eventPage.pageSize"
+                      select-size="getEventList(pageCount, currentPage)"
+                      current-page="eventPage.currentPage" go-page="getEventList(pageCount, currentPage)"></page>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="padding-top: 10px;">
+        <div class="col-sm-12 col-lg-12 col-md-12 col-xs-12">
+            <div style="border: 1px solid #CCCCCC; border-radius: 6px;">
+                <table class="table table-responsive table-hover alarm-table" ng-show="showTab == 'alarm'">
+                    <thead>
+                        <tr>
+                            <th width="5%" class="text-center b-r-1" ng-click="checkedAll()">
+                                <input type="checkbox" ng-checked="allIsChecked"/>
+                            </th>
+                            <th width="8%" class="b-r-1 autoHideTableText">级别</th>
+                            <th width="8%" class="b-r-1 autoHideTableText">状态</th>
+                            <th width="8%" class="b-r-1 autoHideTableText">告警对象</th>
+                            <th width="15%" class="b-r-1 autoHideTableText">对象索引</th>
+                            <th width="15%" class="b-r-1 autoHideTableText">产生时间</th>
+                            <th width="18%" class="b-r-1 autoHideTableText">告警描述</th>
+                            <th width="23%" class="autoHideTableText">修复建议</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="alarm in alarmList | orderBy:['resolved', 'severity', 'when']">
+                        <td ng-click="checked(alarm)" class="text-center">
+                            <input type="checkbox" ng-checked="alarm.$checked" ng-disabled="alarm.resolved == '1' || alarm.confirmed == '1'"/>
+                        </td>
+                        <td class="autoHideTableText" ng-style="{color: alarmSevColor(alarm.severity)}"
+                            title="{{alarm.severity | alarmSevState}}">{{alarm.severity | alarmSevState}}
+                        </td>
+                        <td class="autoHideTableText" ng-style="{color: alarmStateColor(alarm.resolved)}"
+                            ng-class="{'cursor-pointer': alarm.resolved == 1}" ng-click="repairDetails(alarm)"
+                            title="{{alarm.resolved | isOrNot:alarm.confirmed}}">{{alarm.resolved | isOrNot:alarm.confirmed}}
+                        </td>
+                        <td class="autoHideTableText" title="{{alarm.object}}">{{alarm.object}}</td>
+                        <td class="autoHideTableText" title="{{alarm.indexShow}}">{{alarm.indexShow}}</td>
+                        <td class="autoHideTableText" title="{{alarm.when | date:'yyyy-MM-dd HH:mm:ss'}}">{{alarm.when |
+                            date:'yyyy-MM-dd HH:mm:ss'}}
+                        </td>
+                        <td class="autoHideTableText" title="{{alarm.description}}">{{alarm.description}}</td>
+                        <td class="autoHideTableText" title="{{alarm.tips}}">{{alarm.tips}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <table class="table table-responsive table-hover alarm-table" ng-show="showTab == 'event'">
+                    <thead>
+                    <tr>
+                        <th width="20%" class="b-r-1">发生时间</th>
+                        <th width="10%" class="b-r-1">操作人</th>
+                        <th width="15%" class="b-r-1">事件类型</th>
+                        <th width="26%" class="b-r-1">事件对象</th>
+                        <th width="12%" class="b-r-1">事件状态</th>
+                        <th width="17%" class="b-r-1">登录IP</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="event in eventList">
+                        <td class="autoHideTableText">{{event.when | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="autoHideTableText" title="{{event.operator}}">{{event.operator}}</td>
+                        <td class="autoHideTableText" title="{{event.event_type}}">{{event.event_type}}</td>
+                        <td class="autoHideTableText" title="{{event.object}}">{{event.object}}</td>
+                        <td class="autoHideTableText" title="{{event.status}}">{{event.status}}</td>
+                        <td class="autoHideTableText" title="{{event.sourceip}}">{{event.sourceip}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div ng-show="showTab == 'log'" style="position: relative;">
+                    <table class="table table-responsive table-hover alarm-table" style="position: absolute;">
+                        <thead>
+                            <tr>
+                                <th width="5%" class="text-center b-r-1" ng-click="checkedAllLog()">
+                                    <input type="checkbox" ng-checked="allLogIsChecked"></th>
+                                <th width="10%" class="b-r-1 autoHideTableText">节点名称</th>
+                                <th width="10%" class="b-r-1 autoHideTableText">IP地址</th>
+                                <th width="10%" class="b-r-1 autoHideTableText">日志大小</th>
+                                <th width="65%" class="b-r-1 autoHideTableText">日志名称</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div style="height: 450px; overflow: auto;">
+                        <table class="table table-responsive table-hover alarm-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%" class="text-center b-r-1" ng-click="checkedAllLog()">
+                                        <input type="checkbox" ng-checked="allLogIsChecked"></th>
+                                    <th width="10%" class="b-r-1 autoHideTableText">节点名称</th>
+                                    <th width="10%" class="b-r-1 autoHideTableText">IP地址</th>
+                                    <th width="10%" class="b-r-1 autoHideTableText">日志大小</th>
+                                    <th width="65%" class="b-r-1 autoHideTableText">日志名称</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="log in logList">
+                                    <td class="text-center" ng-click="checkedLog(log)">
+                                        <input type="checkbox" ng-checked="log.$checked"></td>
+                                    <td style="color:#f67c05" class="autoHideTableText">{{log.hostid}}</td>
+                                    <td style="color:#f67c05" class="autoHideTableText">{{log.ipaddr}}</td>
+                                    <td style="color:#f67c05" class="autoHideTableText">{{log.size}}</td>
+                                    <td class="autoHideTableText">
+                                        <span ng-show="log.$proccessing">
+                                            <img src="images/configure/loading.gif"/>
+                                        </span>
+                                        <a ng-class="{true:'downLoadLink', false:'downLoadInfo'}[log.status=='ok']"
+                                           ng-click="log.status!='ok' || downloadLog(log.ipaddr)">{{log.filename}}</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div style="height: 38px; background-color: #FAFBFD; border-radius: 0 0 6px 6px; border-top: 1px solid #dddddd;"></div>
+            </div>
+        </div>
+    </div>
+    <!-- 告警：修复详情 Model -->
+    <div id="showRepairDetails" class="modal fade" style="top: 45%;margin-top: -235px;"
+         tabindex="-1" role="dialog" aria-labelledby="repairDetails">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title modal-title-font" id="repairDetails">修复/清除详情</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body-padding">
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr>
+                                <td class="text-right">修复/清除时间</td>
+                                <td>{{alarmRepair.resolveTime | date}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">操作者</td>
+                                <td>{{alarmRepair.operater}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">备注</td>
+                                <td>{{alarmRepair.remark}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 手工清除 model -->
+    <div id="handworkModal" class="modal fade" style="top: 45%;margin-top: -235px;"
+         tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form class="form" name="removeForm">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title modal-title-font" id="myModalAbout">手工清除</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="modal-body-padding">
+                            <div class="pb10 c8a">注意：手工清除的告警，如果问题仍存在，在一段时间后，系统仍会告警</div style="color: #8A8A8A;">
+                            <label>备注：</label>
+                            <textarea class="form-control" rows="3" name="removeForm.remark" ng-model="remark" ng-pattern="/^[\x00-\x7F]{1,500}$/" required></textarea>
+                            </br> 
+                            <span style="color:red;" ng-show="removeForm.$dirty && removeForm.$invalid">
+                                仅支持500个以内的ASCII字符，包括英文字符和数字。
+                            </span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success" ng-click="resolveAlarm()" ng-disabled="removeForm.$invalid">确定</button>
+                        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- 收集日志 model -->
+    <div id="createLog" class="modal fade" style="top: 45%;margin-top: -235px;"
+         tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title modal-title-font" id="myModalAbout">收集日志</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body-padding">
+                        <div class="row">
+                            <label>下载最近</label>
+                            <select ng-model="logTime">
+                                <option value="onemonth">一个月</option>
+                                <option value="oneweek">一个星期</option>
+                                <option value="threeday">三天</option>
+                                <option value="oneday">一天</option>
+                            </select>
+                            <select ng-model="logModule">
+                                <option value="all">全部</option>
+                                <option value="engine">存储引擎</option>
+                                <option value="om">管理系统</option>
+                                <option value="os">操作系统</option>
+                            </select>
+                            <label>的日志</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" ng-click="collectLog()">确定</button>
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 清除日志 model -->
+    <div id="deleteLog" class="modal fade" style="top: 45%;margin-top: -235px;"
+         tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title modal-title-font">清除日志</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body-padding">
+                        <p>确定清除日志</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" ng-click="deleteLog()">确定</button>
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

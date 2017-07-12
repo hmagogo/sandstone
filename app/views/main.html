@@ -1,0 +1,1029 @@
+<div role="bar"></div>
+<div class="vs-success" id="succNoticeMsg"> <img src="images/main/success.png"> <span> {{succNoticeMsg}} </span> </div>
+<div class="vs-failure" id="failNoticeMsg"> <img src="images/main/failed.png"> <span> {{failNoticeMsg}} </span> </div>
+<!-- main header -->
+<div class="sds-main-header" ng-init="init()">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-2 col-md-2 col-sm-3 col-xs-3">
+                <div class="sds-header-logo"><img src="images/main/head_logo.png" ></div>
+            </div>
+            <div class="col-lg-10 col-md-10 col-sm-9 col-xs-9">
+                <div class="row" style="margin-top: 8px;">
+                    <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
+                        <div id="tip-msg-top">
+                            <span class="redColor" ng-show="!systemMode.isNormal">系统异常，管理系统进入安全模式！</span>
+                            <span class="redColor" id="licenseInfo">&nbsp;&nbsp;{{licenseInfo}}</span>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3" id="navbar-dropdown">
+                        <div style="float: right;padding-right: 15px;height:30px;">
+                            <div class="btn-group btn-dropdown" style="width:50px;height:50px;">
+                                <a id="drop1" class="dropdown-toggle" data-toggle="dropdown">
+                                    <img src="images/main/btn_set.png" alt="" />
+                                </a>
+                                <ul class="dropdown-menu top-arrow" aria-labelledby="drop1" style="left:-136px;top:30px;">
+                                    <li>
+                                        <a ng-click="showNtpSet()">时间服务器设置</a>
+                                    </li>
+                                    <li>
+                                        <a ng-click="showClusterParamentSet()">集群参数配置</a>
+                                    </li>
+                                    <li>
+                                        <a ng-click="showDiskReplceSet()">磁盘替换模式</a>
+                                    </li>
+                                    <li>
+                                        <a ng-click="showSnmpConfig()">SNMP配置</a>
+                                    </li>
+                                    <li>
+                                        <a ng-click="showEmailConfig()">SMTP</a>
+                                    </li>
+                                    <li>
+                                        <a ng-click="showAddSysEmailConfig()">添加告警邮箱</a>
+                                    </li>
+                                    <li>
+                                        <a ng-click="showAuthConfig()">REST API设置</a>
+                                    </li>
+                                    <li>
+                                        <a ng-click="licenseQueryLicenseBoxShow('Alarm')">
+                                            产品授权信息
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a ng-click="upgradeOnlineShow()">
+                                            版本升级
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="btn-group btn-dropdown" style="width:105px;height:50px;">
+                                <a id="drop2" class="dropdown-toggle" data-toggle="dropdown">
+                                    <span style="border-left:1px solid white; padding-left: 20px;">{{uName}}</span>
+                                    <img src="images/main/head.png" alt="" style="width: 23px;height: 23px;" />
+                                </a>
+                                <ul class="dropdown-menu top-arrow" aria-labelledby="drop2" style="left:-69px;top:30px;">
+                                    <li><a ng-click="showLogout()">注销</a></li>
+                                    <li><a ng-click="showModify()">修改密码</a></li>
+                                    <li><a ng-click="showAbout()">关于</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- subheader -->
+<div class="sds-main-subheader">
+    <div class="container-fluid" id="navbar-header2">
+        <div class="row">
+            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5 col-lg-offset-4 col-md-offset-4 col-sm-offset-4 col-xs-offset-4">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-lg-12 col-md-12 " style="height: 68px;">
+                        <div style="height: 68px;margin-left: auto;margin-right: auto; width: 560px; padding-top: 20px;text-align: center;">
+                            <div style="line-height: 25px;color: #8A8A8A;padding: 5px 10px;width: 58px;float: left;height: 48px;cursor: pointer;"
+                                 ng-style="getMainTitleTextStyle(gMainStateRouteView.current, 'main.container.container_view')"
+                                 ui-sref="main.container.container_view">首页
+                            </div>
+                            <div style="line-height: 25px;color: #8A8A8A;padding: 5px 10px;width: 86px;float: left;height: 48px;cursor: pointer;"
+                                 ng-style="getMainTitleTextStyle(gMainStateRouteView.current, 'main.storage_view')"
+                                 ui-sref="main.storage_view">存储池
+                            </div>
+                            <div style="line-height: 25px;color: #8A8A8A;padding: 5px 10px;width: 86px;float: left;height: 48px;cursor: pointer;"
+                                 ng-style="getMainTitleTextStyle(gMainStateRouteView.current, 'main.block_view')"
+                                 ui-sref="main.block_view">块存储
+                            </div>
+                            <div style="line-height: 25px;color: #8A8A8A;padding: 5px 10px;width: 86px;float: left;height: 48px;cursor: pointer;"
+                                 ng-style="getMainTitleTextStyle(gMainStateRouteView.current, 'main.container.hardware_view')"
+                                 ui-sref="main.container.hardware_view">硬件管理
+                            </div>
+                            <div style="line-height: 25px;color: #8A8A8A;padding: 5px 10px;width: 86px;float: left;height: 48px;cursor: pointer;"
+                                 ng-style="getMainTitleTextStyle(gMainStateRouteView.current, 'main.stateAnalysis')"
+                                 ui-sref="main.stateAnalysis">性能分析
+                            </div>
+                            <div style="line-height: 25px;color: #8A8A8A;padding: 5px 10px;width: 86px;float: left;height: 48px;cursor: pointer;"
+                                 ng-style="getMainTitleTextStyle(gMainStateRouteView.current, 'main.alarmManage')"
+                                 ui-sref="main.alarmManage">告警管理
+                            </div>
+                            <div style="line-height: 25px;color: #8A8A8A;width: 70px;float: left;height: 48px;cursor: pointer;margin-left: -15px">
+                                <span class="badge badge-red" ui-sref="main.alarmManage" ng-show="gAlarm.unresume.critical != 0">{{gAlarm.unresume.critical}}</span>
+                                <span class="badge badge-yellow" ui-sref="main.alarmManage" ng-show="gAlarm.unresume.warning != 0">{{gAlarm.unresume.warning}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- main container -->
+<div id="sdsMainContainer">
+    <div ui-view="container_view" class="sds-main-container"></div>
+</div>
+
+<!-- 时间服务器 Mode -->
+<div id="dNtpSet" class="modal fade" style="top: 45%; margin-top: -235px;"
+     tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title modal-title-font">时间服务器设置</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding" style="padding-top:27px;">
+                    <label> NTP Server </label>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <input class="form-control" type="text" ng-model="serverName"/>
+                        </div>
+                        <div class="col-sm-6">
+                            <button type="button" class="btn btn-default" ng-click="addServer()" href="#mainSet"
+                                    data-toggle="button" ng-disabled="!systemMode.isNormal || isAdd">
+                                + 添加时间服务器
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top: 10px;">
+                        <div class="col-sm-12">
+                            <span class="c8a">与以下服务器进行时间同步</span>
+                            <br/>
+                            <img src="images/configure/pic_line.png" />
+                            <div ng-repeat="server in serverList" style="margin:10px 0;border:1px dotted #e14a07;height:25px;line-height:25px;padding:1px 10px;width:60%;color:#e14a07;">
+                                <span>{{server.servername}}</span>
+                                <span style="float:right;color:#e14a07;cursor:pointer;" ng-click="delServer(server)">
+                                    ×
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="hideDelDiv()">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 在线升级 -->
+<div id="upgradeOnline" class="modal fade" style="top: 17%;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title modal-title-font" id="diskReplace">版本升级</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    <div id="uploadForm">
+                        <label> {{updatePackMsg}} </label>
+                        <span>
+                            <input class="form-control" style="float:left;width:65%;border-top-right-radius: 0px;border-bottom-right-radius: 0px;" placeholder="请选择升级安装包" id="upgradeStyle" ng-model="upgradeStyle"/>
+                            <button class="btn btn-success" ng-click="" style="float:left;width:15%;border-top-left-radius: 0px;border-bottom-left-radius: 0px;" >
+                                <input type="file" name="upgradePackage" id="upgradePackage" style="opacity:0;top: 5.8%;width: 13%;position: absolute;right: 25%;"
+                                ng-model="upgradePackage" >
+                                浏览
+                            </button>
+                        </span>
+                        <button ng-click="upload_package()" class="btn btn-success" style="float:right;"> 上传 </button>
+                    </div>
+                    <div style="margin-top:40px;">
+                            <label> 当前版本：{{version}}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  新版本：{{newVersion}}</label>
+                            <div style="border: 1px solid #CCCCCC; border-radius: 6px; height:300px; overflow: auto;">
+                                <table class="table" style="font-size:xx-small">
+                                    <tr ng-repeat="node in upgradeNodes">
+                                        <td style="padding:8px 2px;"> {{node.ip}} </td>
+                                        <td style="width:60px;padding:8px 2px 8px 0px;"> {{node.update_status.action}} </td>
+                                        <td style="width:50%;padding:8px 0px;">
+                                            <div style="width:80%;margin:auto;">
+                                                <div class="progress" style="margin-top: 4px;height: 8px;width:100%;margin-bottom: 0px;float:left;">
+                                                    <div class="progress-bar {{node.update_status.action}}-progress" role="progressbar" aria-valuenow="{{node.status.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{node.update_status.progress}}%">
+                                                        <span></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="width:32px;padding:8px 2px 8px 0px;">
+                                            {{node.update_status.progress}}%
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <label style="color:#C0C0C0"> 当前操作：{{nowStatus.action}}   &nbsp; &nbsp; 进度状态： {{nowStatus.status}} </label>
+                    </div>
+                </div>
+                <div align="center"><label style="color:#009933"> {{noticeMessage}} </label> </div>
+                <div class="modal-footer">
+                    <div align="left" style="float:left; padding-left:35px">
+                        <button class="btn btn-success" ng-disabled="!nowStatus.completed || nowStatus.action == '空闲状态'" ng-click="confirmUpgradeSuccess()" > 确认结束 </button>
+                    </div>
+                    <div align="left" style="float:left; padding-left:200px">
+                        <button class="btn btn-success" ng-disabled="!systemMode.isNormal || nowStatus.action == '正在更新'" ng-click="startUpgrade()" > 开始升级 </button>
+                    </div>
+                    <div align="right" style="float:right; padding-right:35px">
+                        <button class="btn btn-success" ng-disabled="!systemMode.isNormal || nowStatus.action == '正在回滚' || nowStatus.action == '空闲状态'" ng-click="rollbackVersion()" > 开始回滚 </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--升级工程结束确认-->
+<div id="upgradeConfirmDialog" class="modal fade" style="top: 40%; margin-top: -150px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title modal-title-font">升级成功确认</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    <span> 点击确认将清理所有升级相关文件，本次升级将无法回滚！</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" ng-click="completeUpgradeProject()">&nbsp;确定&nbsp;</button>
+                <button type="button" class="btn btn-default" ng-click="closeConfirmUpgradeDialog()">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 磁盘替换模式 Mode -->
+<div id="diskReplaceMode" class="modal fade" style="top: 45%;margin-top: -235px;"
+           tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title modal-title-font">磁盘替换模式</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    <label>磁盘替换模式</label>
+                    <br/>
+                    <div class="btn-group" style="cursor: pointer; margin: 10px 0; padding-left: 20px;">
+                        <input type="radio" value="auto" ng-model="disk.replaceMode" ng-checked="disk.replaceModeSet == 'auto'" />
+                        <a title="当系统发现有磁盘被拔出并且有新的磁盘插入时，会自动使用新盘替换" style="color:black;text-decoration:none;" ng-click="disk.replaceModeSet = 'auto'">
+                            自动
+                        </a>
+                    </div>
+                    <div class="btn-group" style="cursor: pointer; margin: 10px 0; padding-left: 20px;">
+                        <input type="radio" value="manual" ng-model="disk.replaceMode" ng-checked="disk.replaceModeSet != 'auto'" />
+                        <a title="由管理员手动选择用于替换的磁盘和被替换的磁盘" style="color:black;text-decoration:none;" ng-click="disk.replaceModeSet = 'manual'">
+                            手动
+                        </a>
+                    </div>
+                    <p class="c8a">手动模式下24小时内未对拔插的磁盘做替换，系统将自动进行替换。</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" ng-disabled="!systemMode.isNormal" ng-click="updateDiskReplaceMode()">
+                    保存
+                </button>
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 集群参数配置 -->
+<div id="clusterParament" class="modal fade" style="top: 45%;margin-top: -235px;"
+     tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="min-width: 660px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" ng-click="setClusterParaDisabled()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title modal-title-font">集群参数配置</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    <form>
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th style="width:32%">配置项</th>
+                            <th style="width:50%">参数</th>
+                            <th style="width:18%">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td style="vertical-align:middle">
+                            <div style="clear: both;">
+                                <span>数据重构QoS控制
+                                <i class="details" style="float:right" title="设置业务流量优先或重构流量优先"></i>
+                                </span>
+                            </div>
+                            </td>
+                            <td>
+                                <div class="row" style="vertical-align:middle; height:35px;" >
+                                    <div class="col-sm-4" style="white-space: nowrap; margin:8px 0px 0px 10px;">
+                                        <input type="radio" value="0" ng-model="recoverConfigOption" ng-checked="recoverConfigOption=='0'"
+                                            ng-disabled="!recover_disable"/>
+                                        <a style="color:black;text-decoration:none;" >
+                                            业务优先
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-1"></div>
+                                    <div class="col-sm-4" style="white-space: nowrap; margin:8px 0px 0px 30px;">
+                                        <input type="radio" value="1" ng-model="recoverConfigOption" ng-checked="recoverConfigOption=='1'"
+                                            ng-disabled="!recover_disable"/>
+                                        <a style="color:black;text-decoration:none;" >
+                                            重构优先
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <div class="col-sm-2" style="vertical-align:middle; margin-top:2px">
+                                        <span ng-click="recover_setting()" ng-show="!recover_disable">
+                                            <i class="change dib cursor-pointer"  title="修改"></i>
+                                        </span>
+                                        <span ng-click="recover_setting(0)" ng-show="recover_disable" class="m-r-5">
+                                            <i class="glyphicon glyphicon-remove text-danger cursor-pointer p-t-10" title="取消"></i>
+                                        </span>
+                                        <span ng-click="updateRecoverConfig() || recover_setting(1)" ng-show="recover_disable">
+                                            <i class="glyphicon glyphicon-ok text-success cursor-pointer p-t-10" title="保存"></i>
+                                        </span>
+                                 </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align:middle">
+                            <span> 重建启动延时
+                                <i class="details" style="float:right" title="集群中服务器、硬盘故障后，延迟多久时间启动数据重建"></i>
+                            </span>
+                            </td>
+                            <td>
+                                <div class="row" style="vertical-align:middle">
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control" placeholder="请输入数字" id="rebalanceTimeNow" ng-model="rebalanceTimeNow" ng-disabled="!rebalance_disabled"/>
+                                    </div>
+                                    <div class="col-sm-1">
+                                    </div>
+                                    <div class="col-sm-5" style="margin-left:10px">
+                                        <select class="form-control" id="rebalanceTimeOption" ng-model="rebalanceTimeOption" ng-disabled="!rebalance_disabled">
+                                            <option value="0">天</option>
+                                            <option value="1">小时</option>
+                                            <option value="2">分钟</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            <td style="white-space: nowrap;">
+                                <div class="col-sm-2" style="vertical-align:middle; margin-top:2px">
+                                        <span ng-click="rebalance_setting()" ng-show="!rebalance_disabled">
+                                            <i class="change dib cursor-pointer" title="修改"></i>
+                                        </span>
+                                        <span ng-click="rebalance_setting(0)" ng-show="rebalance_disabled" class="m-r-5">
+                                            <i class="glyphicon glyphicon-remove text-danger cursor-pointer p-t-10" title="取消"></i>
+                                        </span>
+                                        <span ng-click="updateRebalance() || rebalance_setting(1)" ng-show="rebalance_disabled">
+                                            <i class="glyphicon glyphicon-ok text-success cursor-pointer p-t-10" title="保存"></i>
+                                        </span>
+                                    </div>
+                            </td>
+                                <br/>
+                            </td>
+                        </tr>
+                        <!-- rollback rbd thick
+                        <tr>
+                            <td style="vertical-align:middle">
+                            <span> 允许瘦分配
+                                <i class="details" style="float:right" data-toggle="tooltip" data-placement="bottom"
+                                    title="设置是否允许创建的LUN/块设备总容量大于集群总容量"></i>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="row" style="vertical-align:middle; height:35px;" >
+                                    <div class="col-sm-4" style="white-space: nowrap; margin:8px 0px 0px 10px;">
+                                        <input type="radio" value="1" ng-model="allowThinAssign" ng-checked="allowThinAssign=='1'"
+                                            ng-disabled="!thinAssignSettingDisabled"/>
+                                        <a style="color:black;text-decoration:none;" >
+                                            允许
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-1"></div>
+                                    <div class="col-sm-4" style="white-space: nowrap; margin:8px 0px 0px 30px;">
+                                        <input type="radio" value="0" ng-model="allowThinAssign" ng-checked="allowThinAssign=='0'"
+                                            ng-disabled="!thinAssignSettingDisabled"/>
+                                        <a style="color:black;text-decoration:none;" >
+                                            不允许
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="white-space: nowrap; vertical-align:middle">
+                                <div class="col-sm-2">
+                                    <span ng-click="thinAssignSetting()" ng-show="!thinAssignSettingDisabled">
+                                        <i class="change dib cursor-pointer" title="修改"></i>
+                                    </span>
+                                    <span ng-click="thinAssignSetting(0)" ng-show="thinAssignSettingDisabled" class="m-r-5">
+                                        <i class="glyphicon glyphicon-remove text-danger cursor-pointer p-t-10"
+                                            data-toggle="tooltip" data-placement="bottom" title="取消"></i>
+                                    </span>
+                                    <span ng-click="updateThinAssignSetting()" ng-show="thinAssignSettingDisabled">
+                                        <i class="glyphicon glyphicon-ok text-success cursor-pointer p-t-10"
+                                            data-toggle="tooltip" data-placement="bottom" title="保存"></i>
+                                    </span>
+                                </div>
+                            </br>
+                            </td>
+
+                        </tr>
+                        -->
+                        <tr>
+                            <td style="vertical-align:middle">
+                            <span> 一致性检查时间
+                                <i class="details" style="float:right" title="系统启动数据主副本一致性检查的时间范围,建议设置在业务压力最小的时间段"></i>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-sm-5" style="vertical-align:middle">
+                                        <select class="form-control" id="osdScrubBeginHour" ng-model="data.osdScrubBeginHour"  ng-disabled="!scrub_disabled">
+                                            <option ng-repeat="time in scrubTimeList">{{time}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-1" style="margin-top:5px">
+                                        <span> 至 </span>
+                                    </div>
+                                    <div class="col-sm-5" style="margin-left:10px;">
+                                        <select class="form-control" id="osdScrubEndHour" ng-model="data.osdScrubEndHour" ng-disabled="!scrub_disabled">
+                                            <option ng-repeat="time in scrubTimeList">{{time}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="white-space: nowrap; vertical-align:middle">
+                                <div class="col-sm-2">
+                                    <span ng-click="scrub_setting()" ng-show="!scrub_disabled">
+                                        <i class="change dib cursor-pointer" title="修改"></i>
+                                    </span>
+                                    <span ng-click="scrub_setting(0)" ng-show="scrub_disabled" class="m-r-5">
+                                        <i class="glyphicon glyphicon-remove text-danger cursor-pointer p-t-10" title="取消"></i>
+                                    </span>
+                                    <span ng-click="updateScrub() || scrub_setting(1)" ng-show="scrub_disabled">
+                                        <i class="glyphicon glyphicon-ok text-success cursor-pointer p-t-10" title="保存"></i>
+                                    </span>
+                                </div>
+                            </br>
+                            </td>
+                        </tr>
+                    </table>
+                    </form>
+                    <div class="fontSize16"  style="color:red;">{{clusterSetErrMsg}}</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" ng-click="setClusterParaDisabled()" data-dismiss="modal" aria-hidden="true">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AK/SK确认 Modal -->
+<div id="sureAuth" class="modal fade" style="top: 35%;margin-top: -90px;"
+     tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title modal-title-font" id="myModalLogout">确认</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    <span> 重新生成AccessKey/SecretKey后原来的AccessKey/SecretKey将会失效。 </span>
+                    <span> AccessKey/SecretKey通常用于第三方访问鉴权。 </span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" ng-click="updateAuth()">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- AK SK 配置 -->
+<div id='authConfigMode' class='modal fade' style="top: 45%;margin-top: -235px;"tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title modal-title-font">REST API配置</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    <form>
+                    <table class="table table-bordered">
+                        <tbody>
+                        <tr>
+                            <td>AccessKey</td>
+                            <td>{{RestApi.access_key}}</td>
+                        </tr>
+                        <tr>
+                            <td>SecretKey</td>
+                            <td>{{RestApi.secret_key}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    </form>
+                    <div>
+                        <img src="images/main/reset_secret_key.png" ng-show='updateAuthDone' />
+                        <a ng-click="sureUpdateAkSk()" style="cursor: pointer;" ng-show='updateAuthDone'>重新生成AccessKey/SecretKey</a>
+                        <div ng-show='updateAuthDone'> {{authInfo}} </div>
+                        <div class="discover" name="discover" ng-show='!updateAuthDone' style="float:left;width:20px;height:20px;margin:10px 0px 0px 10px"></div>
+                        <span ng-show='!updateAuthDone'>请稍候</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- email smtp show -->
+<div id='emailSmtpShow' class='modal fade' style="top: 45%;margin-top: -235px;"tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 ng-show="alarmSmtp" class="modal-title modal-title-font">SMTP列表</h4>
+                <h4 ng-show="!alarmSmtp" class="modal-title modal-title-font">SMTP配置</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    <form ng-show="alarmSmtp">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <span style="float:left;margin-left:10px;">{{alarmSmtp.user}}@{{alarmSmtp.address}}:{{alarmSmtp.port}} </span>
+                                        <span style="float:right;margin-right:7px;cursor: pointer;" title="删除" ng-click="deleteSmtp(alarmSmtp)">×</span>
+                                        <a style="float:right;margin-right:20px;cursor: pointer;" title="发送测试邮件" ng-click="testSmtp()"> 发送测试邮件  </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                    <div ng-show="!alarmSmtp">
+                        <form>
+                            <table  class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td> 域名 </td>
+                                        <td>
+                                            <input type='text' ng-model="smtp.address" placeholder="域名" class="form-control" style="width:100%;display:inline;"/> 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td> 端口 </td>
+                                        <td>
+                                            <input type='text' ng-model="smtp.port" placeholder="端口" class="form-control" style="width:100%;display:inline;"/> 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td> 安全模式 </td>
+                                        <td>
+                                            <input type='text' ng-model="smtp.secureMode" placeholder="安全模式" class="form-control" style="width:100%;display:inline;"/> 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td> 用户名 </td>
+                                        <td>
+                                            <input type='text' ng-model="smtp.user" placeholder="用户名" class="form-control" style="width:100%;display:inline;"/> 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td> 密码 </td>
+                                        <td>
+                                            <input type='password' ng-model="smtp.password" placeholder="密码" class="form-control" style="width:100%;display:inline;"/> 
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                    <div>
+                        <!-- 错误信息 -->
+                        <div class="fontSize16"  style="color:red;">{{errMsg}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" ng-click="addSmtp(smtp)" ng-show="!alarmSmtp">
+                    保存
+                </button>
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id='emailConfigMode' class='modal fade' style="top: 45%;margin-top: -235px;"tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title modal-title-font">邮件配置</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    <form>
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr ng-repeat="email in emailList">
+                                    <td>
+                                        <a href="mailto:{{email.email}}" style="margin-left:10px;">{{email.email}}</a>
+                                        <span style="float:right;margin-right:7px;cursor: pointer;" title="删除" ng-click="deleteSysEmail(email)">×</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <div style="display:inline;">
+                                <input type='text' ng-model="newEmail" placeholder="new email" class="form-control" style="width:80%;display:inline;"/>
+                            </div>
+                            <div style="display:inline; float:right;">
+                                <button class="btn-sure" ng-click="addSysEmail()" style="margin:2px;" > 添加 </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- SNMP配置 Mode -->
+<div id="snmpConfigMode" class="modal fade" style="top: 45%;margin-top: -235px;"tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title modal-title-font">SNMP配置</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    <form>
+                    <table class="table table-bordered">
+                        <tbody>
+                        <tr ng-show="snmp.enable == 2">
+                            <td>SNMP配置</td>
+                            <td>
+                                正在加载...
+                            </td>
+                        </tr>
+                        <tr ng-hide="snmp.enable == 2">
+                            <td>SNMP开关</td>
+                            <td>
+                                <input type="radio" value="1" ng-model="snmp.enable" style="margin-left:10px;"/>
+                                    打开
+                                <input type="radio" value="0" ng-model="snmp.enable" style="margin-left:10px;"/>
+                                    关闭
+                                <br/>
+                            </td>
+                        </tr>
+                        <tr ng-show="snmp.enable == 1">
+                            <td>SNMP功能列表</td>
+                            <td>
+                                <span ng-repeat="item in snmp.function_list">
+                                    <input type="checkbox" ng-model="item" ng-checked='true' ng-disabled="true" style="margin-left:10px;"/>
+                                    <span title="目前版本仅支持通过snmp协议上报告警信息">
+                                        告警上报
+                                    </span>
+                                    <br/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr ng-show="snmp.enable == 1">
+                            <td>SNMP版本</td>
+                            <td>
+                                <!--input type="radio" value="6" ng-model="" style="margin-left:10px;"/>
+                                <a title="" >
+                                    v1
+                                </a-->
+                                <input type="radio" value="v2c" ng-model="snmp.version" style="margin-left:10px;"/>
+                                v2c
+                                <!--input type="radio" value="6" ng-model="" style="margin-left:10px;"/>
+                                <a title="" >
+                                    v3
+                                </a>
+                                <br/-->
+                            </td>
+                        </tr>
+                        <tr ng-show="snmp.enable == 1">
+                            <td>SNMP管理站IP地址</td>
+                            <td>
+                                <input type="text" class="form-control" style="margin-bottom:0px" ng-model="snmp.agent_host"/>
+                            </td>
+                        </tr>
+                        <tr ng-show="snmp.enable == 1">
+                            <td>SNMP团体名称</td>
+                            <td>
+                                <input type="text" class="form-control" style="margin-bottom:0px" ng-model="snmp.community"/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" ng-disabled="!systemMode.isNormal" ng-click="updateSnmpConfig()">
+                    保存
+                </button>
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 产品授权信息 Mode -->
+<div id="licenseMode" class="modal fade" style="top: 45%;margin-top: -235px;"
+     tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="width: 680px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="closeLicenseBoxCheck()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title modal-title-font" id="license">产品授权信息</h4>
+            </div>
+            <div class="modal-body">
+                <div style="width: 100%;max-height: 300px;overflow-y: auto;">
+                    <table class="table table-bordered">
+                        <tr style="background-color: #F8F9FB;">
+                            <td style="width: 20%;">
+                                服务器节点
+                            </td>
+                            <td style="width: 18%;">
+                                IP地址
+                            </td>
+                            <td style="width: 10%;">
+                                许可证
+                            </td>
+                            <td style="width: 18%;">
+                                剩余时间
+                            </td>
+                            <td style="width: 16%;">
+                                授权容量
+                            </td>
+                            <td style="width: 18%;">
+                                使用容量
+                            </td>
+                        </tr>
+                        <tr ng-repeat="l in licenseList">
+                            <td style="width: 20%;cursor: pointer;" ng-click="showLicenseDetail(l)"
+                                class="font-hover">
+                                {{l.hostid}}
+                            </td>
+                            <td style="width: 18%;cursor: pointer;" ng-click="showLicenseDetail(l)"
+                                class="font-hover">
+                                {{l.ip}}
+                            </td>
+                            <td style="width: 10%; cursor: pointer;" ng-click="showLicenseDetail(l)"
+                                class="font-hover" ng-bind-html="l.expiredtime | licenseFormat:l.license">
+                            </td>
+                            <td style="width: 18%; cursor: pointer;" ng-click="showLicenseDetail(l)"
+                                class="font-hover" ng-bind-html="l.expiredtime | licenseFormatTime:l.license">
+                            </td>
+                            <td style="width: 16%; cursor: pointer;vertical-align: middle;"  rowspan="{{licenseList.length}}" ng-show="$index==0"
+                                class="font-hover center">
+                                {{authorized_capacity}}
+                            </td>
+                            <td style="width: 18%; cursor: pointer;vertical-align: middle;"  rowspan="{{licenseList.length}}" ng-show="$index==0"
+                                class="font-hover center">
+                                {{used_capacity | BytesToKMGTB: 'index': 3 }}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal" ng-click="closeLicenseBoxCheck()">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--授权详细信息-->
+<div id="licenseDetail" class="modal fade" style="top: 45%;margin-top: -235px;"
+     tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-disabled="isAdd">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title modal-title-font">授权详情</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    <form>
+                        <div class="form-group">
+                            <label>节点名称：</label>
+                            <div>{{licenseDetail.hostid}}</div>
+                        </div>
+                        <div class="form-group">
+                            <label>机器识别码：</label>
+                            <div>{{licenseDetail.machineid}}</div>
+                        </div>
+                        <div class="form-group">
+                            <label>授权码：</label>
+                            <div class="row">
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" ng-disabled="editAccredit" ng-model="newLicense"/>
+                                </div>
+                                <div style="padding-top:6px;">
+                                    <i class="change dib cursor-pointer" ng-click="editAccredit=false"></i>
+                                </div>
+                            </div>
+                            <div style="color: #ff0000;"> {{licenseErrorMsg}} </div>
+                        </div>
+                        <div class="form-group">
+                            <label>授权详情：</label>
+                            <div>离许可证失效还有：{{expiredtime_str}}</div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" ng-click="updateLicense()" ng-disabled="isAdd">
+                    确定
+                </button>
+                <button class="btn btn-default" data-dismiss="modal" ng-click="closeLicenseDetail()" ng-disabled="isAdd">
+                    返回
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 产品授权注册告警 Mode -->
+<div id="license_register_alarm" class="modal fade" style="top: 45%;margin-top: -235px;"
+     tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title modal-title-font">重要提示</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    <p>部分服务器节点未授权，为保证您的服务正常使用，请尽快注册License。</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" ng-click="showLicense_tip()">
+                    确定
+                </button>
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 修改密码 Modal -->
+<div id="modifyPwModal" class="modal fade" style="top: 40%; margin-top: -150px;"
+     tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="width:500px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title modal-title-font">修改密码</h4>
+            </div>
+            <div class="modal-body" >
+                <div class="modal-body-padding">
+                    <div class="form-group">
+                        <label for="passwordOld" class="control-label">原始密码</label>
+                       <input type="password" class="form-control" id="passwordOld" placeholder="原始密码" ng-model="oldPassword">     
+                    </div>
+                    <div class="form-group" >
+                        <label for="passwordNew" class="control-label">新密码</label>
+                        <input type="password" class="form-control" id="passwordNew" placeholder="新密码" ng-model="newPassword">     
+                    </div>
+                    <div class="form-group">
+                        <label for="passwordNewTwo" class="control-label">再次输入</label>
+                        <input type="password" class="form-control" id="passwordNewTwo" placeholder="再次输入" ng-model="newPassword2">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" ng-click="changePassword()">保存</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 注销 Modal -->
+<div id="logoutModal" class="modal fade" style="top: 35%;margin-top: -90px;"
+     tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title modal-title-font" id="myModalLogout">注销</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    <p> 你确定要注销当前用户吗？ </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" ng-click="logout()">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 关于 Modal -->
+<div id="aboutModal" class="modal fade" style="top: 45%;margin-top: -235px;"
+     tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title modal-title-font" id="myModalAbout">关于我们</h4>
+            </div>
+            <img src="images/main/pic_about.png" width="100%"/>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    杉岩分布式存储系统 {{version}}
+                    <br>
+                    深圳市杉岩数据技术有限公司 版权所有
+                    </br>
+                    Copyright&copy; 2014-2017 SandStone. All Rights Reserved.
+                    </br>
+                    联系电话： 400-838-3331
+                    </br>
+                    联系邮箱：
+                    <a href="mailto:contactus@szsandstone.com">
+                        contactus@szsandstone.com
+                    </a>
+                    </br>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="AlertInfo" class="modal fade" style="top: 45%;margin-top: -235px;"
+     tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title modal-title-font">提示框</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    <p ng-bind="DialogInfo" style="color:#1d1007"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

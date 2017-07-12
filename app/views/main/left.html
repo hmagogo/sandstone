@@ -1,0 +1,105 @@
+<div class="row" ng-init="init()" style="height: 25%;" onresize="alert('sdfasdfsaf');">
+    <div class="col-lg-12 sds-frame-padding">
+        <div class="sds-frame p15-0 move-highlights" id="sdsFrameReferenceHeightId">
+            <div class="half height12">
+                <div class="halfLeft height12">
+                    <div class="fontSize12 width12 height1">&nbsp;</div>
+                    <div class="height6">
+                        <div class="height4" ng-show="isDashboardView"></div>
+                        <div class="height3" ng-hide="isDashboardView"></div>
+                        <div class="height5">
+                            <span class="fontSize24 hight_light_font_color">{{capacity.free_bytes | BytesToKMGTB:'value':1}}</span>
+                            <span class="fontSize14 fontWidth600">{{capacity.free_bytes | BytesToKMGTB:'unit'}}</span>
+                        </div>
+                        <div class="height3 fontSize14">可用容量</div>
+                    </div>
+                </div>
+                <div id="capacityCycle" class="barChartDiv height12" ng-show="isDashboardView"></div>
+                <div class="barChartDiv height12" ng-hide="isDashboardView"></div>
+            </div>
+            <!-- 分隔线 -->
+            <div class="solid" ng-style="middleSolidStyle" ng-show="isDashboardView"></div>
+            <div class="solid" ng-style="middleSolidStyle" ng-hide="isDashboardView"></div>
+            <!-- 分隔线 end -->
+            <div ng-show="isDashboardView" class="half padding0_13 height12">
+                <div class="halfRight height12">
+                    <div class="fontsize12-14 height3"></div>
+                    <div class="fontsize12-14 height3">
+                        <div class="usedExample"></div>
+                        <span class="floatLeft">已使用</span>
+                        <span class="floatRight hight_light_font_color ">{{capacity.used_bytes | BytesToKMGTB}}</span>
+                    </div>
+                    <div class="fontsize12-14 height3">
+                        <div class="assignedExample"></div>
+                        <span class="floatLeft">已分配</span>
+                        <span class="floatRight hight_light_font_color ">{{capacity.assigned_bytes | BytesToKMGTB}}</span>
+                    </div>
+                    <div class="fontsize12-14 height3">
+                        <div class="freeExample"></div>
+                        <span class="floatLeft">总容量</span>
+                        <span class="floatRight hight_light_font_color ">{{capacity.capacity_bytes | BytesToKMGTB}}</span>
+                    </div>
+                </div>
+            </div>
+            <div ng-hide="isDashboardView" class="half padding0_13 height12">
+                <div class="halfRight height12">
+                    <div class="fontsize12-14 height3">&nbsp;</div>
+                    <!--<div class="fontsize12-14 height1" ng-show="isDashboardView">&nbsp;</div>-->
+                    <div class="fontsize12-14 height3">
+                        <div class="usedExample"></div>
+                        <span class="floatLeft">已使用</span>
+                        <span class="floatRight">{{capacity.used_bytes | BytesToKMGTB}}</span>
+                    </div>
+                    <div class="fontsize12-14 height3">
+                        <div class="assignedExample"></div>
+                        <span class="floatLeft">已分配</span>
+                        <span class="floatRight">{{capacity.assigned_bytes | BytesToKMGTB}}</span> 
+                    </div>
+                    <div class="fontsize12-14 height3">
+                        <div class="freeExample"></div>
+                        <span class="floatLeft">总容量</span>
+                        <span class="floatRight">{{capacity.capacity_bytes | BytesToKMGTB}}</span>
+                    </div>
+                </div>
+            </div>
+            <div ng-hide="isDashboardView" style="position: absolute;" class="height10 width10_5">
+                <div class="fontSize14 height10">&nbsp;</div>
+                <div class="row">
+                    <div class="col-sm-11" style="display: inline-block;">
+                        <div class="progress" style="height: 15px;">
+                            <div class="progress-bar usedCapacityBC" id="usedProgress" role="progressbar" aria-valuenow="60" aria-valuemin="0" 
+                                aria-valuemax="100" ng-style="{'width': capacity.used_percent + '%'}"></div>
+                            <div class="progress-bar assignedCapacityBC" id="usedProgress" role="progressbar" aria-valuenow="60" aria-valuemin="0" 
+                                aria-valuemax="100" ng-style="{'width': capacity.assinged_percent + '%'}"></div>
+                        </div>
+                    </div>
+                    <div style="float:left; margin-top: -3px;">{{capacity.used_percent}}%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" style="height: 25%;">
+    <div class="col-lg-12 sds-frame-padding">
+        <div class="sds-frame move-highlights">
+            <div style="position: absolute;">系统IOPS</div>
+            <div id="iops" class="width12 height12"  style="float:left;"></div>
+        </div>
+    </div>
+</div>
+<div class="row" style="height: 25%;">
+    <div class="col-lg-12 sds-frame-padding">
+        <div class="sds-frame move-highlights">
+            <div style="position: absolute;">系统MBPS(B/s)</div>
+            <div id="mbps" class="width12 height12"  style="float:left;"></div>
+        </div>
+    </div>
+</div>
+<div class="row" style="height: 25%;">
+    <div class="col-lg-12 sds-frame-padding">
+        <div class="sds-frame move-highlights">
+            <div style="position: absolute;">系统时延(ms)</div>
+            <div id="latency" class="width12 height12"  style="float:left;"></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+<!-- 确定 modal -->
+<div id="confirmModal" class="modal fade" style="top: 40%; margin-top: -150px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title modal-title-font">确定创建</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    选中磁盘数据将会被清除！
+                </div>
+                <div class="modal-body-padding">
+                    此操作不可逆，是否继续?
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" ng-click="confirmFun()">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="confirmNodeExtendModal" class="modal fade" style="top: 40%; margin-top: -150px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title modal-title-font">确定扩容</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body-padding">
+                    选中磁盘数据将会被清除！
+                </div>
+                <div class="modal-body-padding">
+                    节点时间将会与集群同步!
+                </div>
+                <div class="modal-body-padding">
+                    此操作不可逆，是否继续?
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" ng-click="confirmNodeExtendFun()">继续</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>

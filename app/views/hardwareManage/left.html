@@ -1,0 +1,46 @@
+<div class="row" ng-init="init()" style="height: 25%;">
+    <div class="col-lg-12 sds-frame-padding">
+        <div class="sds-frame move-highlights autoHideText" id="hardwareHeightId">
+            <div class="col-2">
+                <p>CPU总数：</p>
+                <p>总内存：</p>
+                <p>磁盘总数：</p>
+                <p>数据盘总容量：</p>
+                <p>缓存盘总容量：</p>
+            </div>
+            <div class="col-2">
+                <p class="c35">{{clusterInfo.cpu_count}}</p>
+                <p class="c35">{{clusterInfo.mem_total | BytesToKMGTB}}</p>
+                <p class="c35">{{clusterInfo.disk_count}}个</p>
+                <p class="c35">{{clusterInfo.data_disk_capacity | BytesToKMGTB}}</p>
+                <p class="c35">
+                    {{clusterInfo.cache_disk_capacity | BytesToKMGTB}}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" style="height: 25%;">
+    <div class="col-lg-12 sds-frame-padding">
+        <div class="sds-frame move-highlights">
+            <div style="position: absolute;">总CPU利用率(百分比)</div>
+            <div id="cpuTotal" class="width12 height12"></div>
+        </div>
+    </div>
+</div>
+<div class="row" style="height: 25%;">
+    <div class="col-lg-12 sds-frame-padding">
+        <div class="sds-frame move-highlights">
+            <div style="position: absolute;">总内存利用率(百分比)</div>
+            <div id="memTotal" class="width12 height12"></div>
+        </div>
+    </div>
+</div>
+<div class="row" style="height: 25%;">
+    <div class="col-lg-12 sds-frame-padding">
+        <div class="sds-frame move-highlights">
+            <div style="position: absolute;">总磁盘使用率(百分比)</div>
+            <div id="diskTotal" class="width12 height12"></div>
+        </div>
+    </div>
+</div>

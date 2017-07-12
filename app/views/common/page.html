@@ -1,0 +1,19 @@
+<ul class="pagination pagination-sm" style="margin: 0;">
+    <li ng-class="{'disabled': currentPage == 1 || currentPage == null || currentPage == '' || currentPage == undefined}">
+        <a ng-class="{true: 'pre-disabled', false: 'pre'}[currentPage == 1]"
+           ng-click="setCurrentPage(currentPage-1)"></a>
+    </li>
+    <li ng-class="{'disabled': currentPage == totalPage || currentPage == null || currentPage == '' || currentPage == undefined}">
+        <a ng-class="{true: 'next-disabled', false: 'next'}[currentPage == totalPage]"
+           ng-click="setCurrentPage(currentPage+1)" style="margin-left:3px;"></a>
+    </li>
+    <li>
+        <span class="pt2">{{currentPage}}/{{totalPage}}</span>
+    </li>
+    <li>
+        <span> | 
+            <input type="text" placeholder="{{currentPage}}" ng-model="GO"/>
+            <span class="jump" ng-click="setCurrentPage(GO)">跳转</span>
+        </span>
+    </li>
+</ul>

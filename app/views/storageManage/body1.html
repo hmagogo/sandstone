@@ -1,0 +1,188 @@
+﻿<div class="sds-frame" style="padding: 15px;">
+    <div style="float: left;">
+        <ul class="breadcrumb">
+            <li class="cursor-pointer activeBottom">配置</li>
+            <li id="resources" ng-mouseover="storage.showSubLayer($event)" ng-mouseleave="storage.hideSubLayer($event)" flag="true">
+                存储资源
+                <span class="hideSub">存储池</span>
+                <span class="hideSub">卷</span>
+            </li>
+            <li id="ISCSI" ng-mouseover="storage.showSubLayer($event)" ng-mouseleave="storage.hideSubLayer($event)" flag="true">
+                ISCSI
+                <span class="hideSub">ISCSI目标</span>
+                <span class="hideSub" >ISCSI启动器</span>
+            </li>
+            <li id="piece" class="cursor-pointer" >块设备</li>
+        </ul>
+    </div>
+
+    
+
+    <!-- 存储资源：存储池 DIV -->
+    <div ng-show="storage.viewCtrl === 'poolView'" style="height: 100%;" id="poolDiv">
+        <div style="height: 50%;">
+            <div style="float: right; padding-bottom: 5px;">
+                <button class="btn btn-sm btn-success" ng-click="storage.showModal('physicalPoolModal')">
+                    <i class="addition"></i>
+                    创建资源池
+                </button>
+                <div style="float: right; margin-top: 5px; margin-left: 5px;">
+                    <page total-count="page.totalCount" page-count="page.pageSize"
+                        select-size="getAlarmList(pageCount, currentPage)"
+                        current-page="page.currentPage" go-page="getAlarmList(pageCount, currentPage)"></page>
+                </div>
+            </div>
+            <div class="cls"></div>
+            <div style="border: 1px solid #CCCCCC; border-radius: 6px; height:82%; background:#fafbfd;">
+                <table class="table table-responsive table-hover alarm-table">
+                    <thead>
+                      <tr>
+                        <th class="b-r-1 text-center">ID</th>
+                        <th class="b-r-1 text-center">名称</th>
+                        <th class="b-r-1 text-center">存储策略</th>
+                        <th class="b-r-1 text-center">所属存储池</th>
+                        <th class="b-r-1 text-center">存储容量</th>
+                        <th class="b-r-1 text-center">使用率</th>
+                        <th class="b-r-1 text-center">IOPS</th>
+                        <th class="b-r-1 text-center">MBPS</th>
+                        <th class="b-r-1 text-center">状态</th>
+                        <th class="text-center">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="b-r-1 text-center">scsi001</td>
+                        <td class="b-r-1 text-center">2副本</td>
+                        <td class="b-r-1 text-center">default_pool</td>
+                        <td class="b-r-1 text-center">2TB</td>
+                        <td class="b-r-1 text-center">50%</td>
+                        <td class="b-r-1 text-center">20 IO/S</td>
+                        <td class="b-r-1 text-center">400 KB/S</td>
+                        <td class="b-r-1 text-center">2.4 ms</td>
+                        <td class="b-r-1 text-center">正常</td>
+                        <td class="text-center"></td>
+                      </tr>
+                      <tr>
+                        <td class="b-r-1 text-center">scsi001</td>
+                        <td class="b-r-1 text-center">2副本</td>
+                        <td class="b-r-1 text-center">default_pool</td>
+                        <td class="b-r-1 text-center">2TB</td>
+                        <td class="b-r-1 text-center">50%</td>
+                        <td class="b-r-1 text-center">20 IO/S</td>
+                        <td class="b-r-1 text-center">400 KB/S</td>
+                        <td class="b-r-1 text-center">2.4 ms</td>
+                        <td class="b-r-1 text-center">正常</td>
+                        <td class="text-center"></td>
+                      </tr>
+                      <tr>
+                        <td class="b-r-1 text-center">scsi001</td>
+                        <td class="b-r-1 text-center">2副本</td>
+                        <td class="b-r-1 text-center">default_pool</td>
+                        <td class="b-r-1 text-center">2TB</td>
+                        <td class="b-r-1 text-center">50%</td>
+                        <td class="b-r-1 text-center">20 IO/S</td>
+                        <td class="b-r-1 text-center">400 KB/S</td>
+                        <td class="b-r-1 text-center">2.4 ms</td>
+                        <td class="b-r-1 text-center">正常</td>
+                        <td class="text-center"></td>
+                      </tr>
+                      <tr>
+                        <td class="b-r-1 text-center">scsi001</td>
+                        <td class="b-r-1 text-center">2副本</td>
+                        <td class="b-r-1 text-center">default_pool</td>
+                        <td class="b-r-1 text-center">2TB</td>
+                        <td class="b-r-1 text-center">50%</td>
+                        <td class="b-r-1 text-center">20 IO/S</td>
+                        <td class="b-r-1 text-center">400 KB/S</td>
+                        <td class="b-r-1 text-center">2.4 ms</td>
+                        <td class="b-r-1 text-center">正常</td>
+                        <td class="text-center"></td>
+                      </tr>
+                      <tr>
+                        <td class="b-r-1 text-center">scsi001</td>
+                        <td class="b-r-1 text-center">2副本</td>
+                        <td class="b-r-1 text-center">default_pool</td>
+                        <td class="b-r-1 text-center">2TB</td>
+                        <td class="b-r-1 text-center">50%</td>
+                        <td class="b-r-1 text-center">20 IO/S</td>
+                        <td class="b-r-1 text-center">400 KB/S</td>
+                        <td class="b-r-1 text-center">2.4 ms</td>
+                        <td class="b-r-1 text-center">正常</td>
+                        <td class="text-center"></td>
+                      </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div style="height: 50%;">
+            磁盘
+            <div style="float: right; padding-bottom: 5px;">
+                <button class="btn btn-sm btn-success">
+                    <i class="addition"></i>
+                    添加服务器
+                </button>
+                <div style="float: right; margin-top: 5px; margin-left: 5px;">
+                    <page total-count="page.totalCount" page-count="page.pageSize"
+                        select-size="getAlarmList(pageCount, currentPage)"
+                        current-page="page.currentPage" go-page="getAlarmList(pageCount, currentPage)"></page>
+                </div>
+            </div>
+            <div class="cls"></div>
+            <div style="border: 1px solid #CCCCCC; border-radius: 6px; height:85%; background:#fafbfd;">
+                <table class="table table-responsive table-hover alarm-table">
+                    <thead>
+                        <tr>
+                          <th class="b-r-1 text-center">设备名</th>
+                          <th class="b-r-1 text-center">类型</th>
+                          <th class="b-r-1 text-center">容量</th>
+                          <th class="b-r-1 text-center">所属节点</th>
+                          <th class="b-r-1 text-center">所属节点IP</th>
+                          <th class="b-r-1 text-center">健康度</th>
+                          <th class="b-r-1 text-center">厂商</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                          <td class="b-r-1 text-center">sda</td>
+                          <td class="b-r-1 text-center">机械盘</td>
+                          <td class="b-r-1 text-center">10TB</td>
+                          <td class="b-r-1 text-center">node0001</td>
+                          <td class="b-r-1 text-center">10.10.1.119</td>
+                          <td class="b-r-1 text-center">正常</td>
+                          <td class="b-r-1 text-center">INTEL</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- 存储资源：存储池 DIV END -->
+
+    <!-- 存储资源：卷 DIV -->
+    <div ng-show="storage.viewCtrl === 'lunView'" style="height: 100%;" id="lunDiv">
+        <div style="height: 50%;">
+            <div class="cls"></div>
+            </div>
+            <!-- 收缩下拉 -->
+            <div class="shrink">
+                <span class="down"></span>
+                <span class="up" ng-show="false"></span>
+            </div>
+            <!-- <div class="shrink" ng-show="hardwareNodesDetail.status.length | showNodeShrinkFilter">
+                <span class="down" ng-show="nodeDropdown" ng-click="showNodeDropdown()"></span>
+                <span class="up" ng-show="nodeUp" ng-click="showNodeUp()"></span>
+            </div> -->
+        </div>
+        <div style="height: 50%;">
+            <div style="float:left; width:49%; height:100%; background:#ccc;">
+            </div>
+            <div style="float:right; width:49%; height:100%; background:#ccc;">
+            </div>
+        </div>
+    </div>
+    <!-- 存储资源：卷 DIV END -->
+
+    
+
+    
+</div>

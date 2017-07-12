@@ -1,0 +1,218 @@
+<!--状态分析右边-->
+<div class="container-fluid sds-frame" ng-init="init()">
+    <div style="height: 100%;">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3" style="height: 100%; padding: 0;">
+            <div class="sds-frame sds-frame-fouth-height" style="padding: 0px;">
+                <div class="fontSize16 top-title">
+                    <span class="title-offset">性能项添加区</span>
+                </div>
+                <div class="auto-over-flow" ng-style="contentDivStyle">
+                    <div ng-repeat="analysisItem in gAnalysis.items">
+                        <span class="col-lg-12 col-md-12 col-sm-12 col-xs-12 analysis-item" style="padding:0px;">
+                            <input type="checkbox" style="margin-right: 5px;" ng-click="analysisItem.show = !analysisItem.show" ng-checked="analysisItem.show">
+                            <span>{{analysisItem.name}}</span>
+                            <span class="glyphicon glyphicon-minus-sign analysis-item-remove" style="padding:0px;" ng-click="removeItem(analysisItem.id)"></span>
+                        </span>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 analysis-item-add" ng-click="showAnalyseItemAddingMode()">
+                        <span>+添加性能观察项</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="height: 100%; padding:0px 0px 0px 10px;">
+            <div class="sds-frame sds-frame-fouth-height" style="padding: 0px;">
+                <div class="fontSize16 top-title">
+                    <span class="title-offset">性能分析区</span>
+                    <span class="glyphicon glyphicon-refresh title-fresh-icon" ng-click="freshCharts()"></span>
+                </div>
+                <div  class="auto-over-flow" ng-style="contentDivStyle" id="contentDivId">
+                    <div ng-repeat="analysisItem in gAnalysis.items">
+                        <div style="margin-left: 24px; margin-top: 15px; margin-bottom: -20px;">{{analysisItem.name}}</div>
+                        <div class="width12" style="height: 125px;">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="height: 125px;" id="{{analysisItem.id}}" ng-show="analysisItem.show"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3" style="height: 100%;padding:0px 0px 0px 10px;">
+            <div class="sds-frame sds-frame-fouth-height" style="padding: 0px;">
+                <div class="fontSize16 top-title">
+                    <span class="title-offset">时间选择</span>
+                </div>
+                <div style="margin-left: 24px; margin-top: 18px;">
+                    <button class="btn btn-default" aria-hidden="true" ng-click="changeAnalysisTime('-1h')">
+                        近一小时
+                    </button>
+                    <button class="btn btn-default" aria-hidden="true" ng-click="changeAnalysisTime('-1d')">
+                        近一天
+                    </button>
+                    <button class="btn btn-default" aria-hidden="true" ng-click="changeAnalysisTime('-1w')">
+                        近一周
+                    </button>
+                    <button class="btn btn-default" aria-hidden="true" ng-click="changeAnalysisTime('-1m')">
+                        近一个月
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 添加性能选项 Mode -->
+<div id="analyseItmAddingMode" class="modal fade" style="top: 45%;margin-top: -235px;"
+     tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title modal-title-font" id="diskReplace">添加性能项</h4>
+            </div>
+            <div class="modal-body">
+                <div style="padding: 10px 30px 0px 30px;">
+                    <table class="table">
+                        <tr>
+                            <td>选择要添加的类型</td>
+                            <td>
+                                <select ng-model="modalSelected.type">
+                                    <option value="node">服务器节点</option>
+                                    <option value="storage">存储池</option>
+                                    <option value="cluster">存储集群</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr ng-show="modalSelected.type == 'node'">
+                            <td>服务器节点</td>
+                            <td>
+                            <select ng-model="modalSelected.node.object" ng-options="node.hostid for node in hardwareSummary.servers">
+                                <option value="">--请选择服务器节点--</option>
+                            </select>
+                            </td>
+                        </tr>
+                        <tr ng-show="modalSelected.type == 'node' && modalSelected.node.object">
+                            <td>设备类型</td>
+                            <td>
+                                <select ng-model="modalSelected.node.device.type">
+                                    <option value="">--请选择设备类型--</option>
+                                    <option value="disk" selected="selected" >磁盘</option>
+                                    <option value="nic">网卡</option>
+                                    <option value="cpu">CPU</option>
+                                    <option value="memory">内存</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr ng-show="modalSelected.type == 'node' && modalSelected.node.device.type == 'disk'">
+                            <td>磁盘列表</td>
+                            <td>
+                                <select ng-model="modalSelected.node.device.object"
+                                        ng ng-options="disk.device_name for disk in modalSelected.node.object.disks">
+                                    <option value="">--请选择磁盘--</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr ng-show="modalSelected.type == 'node' && modalSelected.node.device.type == 'disk'">
+                            <td>性能类型</td>
+                            <td>
+                                <select ng-model="modalSelected.node.device.perfType">
+                                    <option value="">--请选择性能类型--</option>
+                                    <option value="IOPS">IOPS</option>
+                                    <option value="MBPS">MBPS</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr ng-show="modalSelected.type == 'node' && modalSelected.node.device.type == 'nic'">
+                            <td>网卡列表</td>
+                            <td>
+                                <select ng-model="modalSelected.node.device.object"
+                                        ng-options="nic.name for nic in modalSelected.node.object.nics">
+                                    <option value="">--请选择网卡--</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr ng-show="modalSelected.type == 'node' && modalSelected.node.device.type == 'nic'">
+                            <td>性能类型</td>
+                            <td>
+                                <select ng-model="modalSelected.node.device.perfType">
+                                    <option value="">--请选择性能类型--</option>
+                                    <option value="RxTx_byte">收发带宽</option>
+                                    <option value="RxTx_package">收发包数量</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr ng-show="modalSelected.type == 'node' && modalSelected.node.device.type == 'cpu'">
+                            <td>性能类型</td>
+                            <td>
+                                <select ng-model="modalSelected.node.device.perfType">
+                                    <option value="">--请选择性能类型--</option>
+                                    <option value="idle">idle</option>
+                                    <option value="system">system</option>
+                                    <option value="user">user</option>
+                                    <option value="iowait">iowait</option>
+                                    <option value="irq">irq</option>
+                                    <option value="softirq">softirq</option>
+                                    <option value="nice">nice</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr ng-show="modalSelected.type == 'node' && modalSelected.node.device.type == 'memory'">
+                            <td>性能类型</td>
+                            <td>
+                                <select ng-model="modalSelected.node.device.perfType">
+                                    <option value="">--请选择性能类型--</option>
+                                    <option value="MemFree">MemFree</option>
+                                    <option value="Buffers">Buffers</option>
+                                    <option value="Cached">Cached</option>
+                                    <option value="SwapCached">SwapCached</option>
+                                    <option value="SwapFree">SwapFree</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr ng-show="modalSelected.type == 'storage'">
+                            <td>存储池</td>
+                            <td>
+                                <select ng-model="modalSelected.storage.poolObject" ng-options="pool.poolName for pool in poolSummary">
+                                    <option value="">--请选择存储池--</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr ng-show="modalSelected.type == 'storage'">
+                            <td>性能类型</td>
+                            <td>
+                                <select ng-model="modalSelected.storage.perfType">
+                                    <option value="">--请选择性能类型--</option>
+                                    <option value="IOPS">IOPS</option>
+                                    <option value="MBPS">MBPS</option>
+                                    <option value="LATENCY">平均时延</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr ng-show="modalSelected.type == 'cluster'">
+                            <td>性能类型</td>
+                            <td>
+                                <select ng-model="modalSelected.cluster.perfType">
+                                    <option value="">--请选择性能类型--</option>
+                                    <option value="IOPS">IOPS</option>
+                                    <option value="MBPS">MBPS</option>
+                                    <option value="LATENCY">平均时延</option>
+                                    <option value="CAPACITY">容量</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <button class="btn btn-default" style="border-color: #ffffff;" ng-click="addingItem()">+添加</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="freshCharts()">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

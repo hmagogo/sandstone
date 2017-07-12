@@ -1,0 +1,37 @@
+<div class="container-fluid" style="overflow-x: hidden;">
+    <div class="row">
+        <div class="login-background">
+            <div class="login-logo">
+                <span class="login-logo-mark"></span>
+            </div>
+            <div class="login-font">
+                <span class="login-font-1"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" style="margin: 0 auto; width: 200px;">
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label class="control-label" style="color:red;">{{errMsg || "&nbsp;"}}</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <input type="text" class="form-control" style="width: 200px;" id="inputEmail3" placeholder="请输入用户名"
+                           ng-model="userName">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <input type="password" class="form-control" style="width: 200px;" id="inputPassword3"
+                           placeholder="请输入密码" ng-model="passWord"></div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <button type="submit" class="btn btn-success" ng-click="login()" style="width: 198px;">登录</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

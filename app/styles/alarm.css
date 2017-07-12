@@ -1,0 +1,29 @@
+.btn-selected {
+    color: #FFFFFF;
+    background-color: #9AA8B1;
+}
+
+.b-r-1 {
+    border-right: 1px solid #dddddd;
+}
+
+.c-grey {
+    color: grey;
+}
+
+.alarm-table {
+    table-layout: fixed;
+    margin-bottom: 0;
+    background-color: #FAFBFD;
+    border-radius: 6px 6px 0 0;
+}
+.alarm-table tbody {
+    background-color: #FFFFFF;
+}
+
+.alarm-table thead tr th {
+    font-weight:500;
+}
+.alarm-table tbody tr td {
+    color:#353535;
+}

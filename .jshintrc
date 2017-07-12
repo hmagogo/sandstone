@@ -1,0 +1,88 @@
+{
+    /* jshint maxlen:1000, quotmark:double */
+    // JSHint 默认配置文件 (as on JSHint website)
+    // 更多详情 http://jshint.com/docs/
+
+    // 设置
+    "maxerr": 100,       // {int}最大错误提示数
+    "passfail": false,    // true: 在一个错误处停止提示
+
+    // 强制选项
+    "bitwise": true,    // true: 禁用位运算符(&, |, ^, etc.)，位运算符在 JavaScript 中使用较少，经常是把 && 错输成 &
+    "camelcase": true,     // true: Identifiers must be in camelCase
+    "curly": true,     // true: 循环或者条件语句必须使用花{}括号包围
+    "eqeqeq": false,     // true: 强制使用三等号(===)作比较
+    "es3": true,	// true : 兼容低级浏览器 IE 6/7/8/9
+    "forin": false,     // true: Require filtering for..in loops with obj.hasOwnProperty()
+    "freeze": false,	// true: 禁止重写原生对象的原型，比如Array，Date
+    "immed": false,    // true: Require immediate invocations to be wrapped in parens e.g. `(function () { } ());`
+    "indent": 4,        // 代码缩进4位数
+    "latedef": "nofunc",    // true: 禁止定义之前使用变量，忽略function函数声明
+    "newcap": true,    // true: 构造器函数首字母大写，如`new F()`
+    "noarg": true,     // true: 禁止使用arguments.caller和arguments.callee，未来会被弃用，ECMAScript 5 禁止使用arguments.callee
+    "noempty": true,     // true: Prohibit use of empty blocks
+    "nonew": true,    // true: Prohibit use of constructors for side-effects (without assignment)
+    "plusplus": false,    // true: 禁止使用 `++` & `--`
+    "quotmark": "single",   // 引号的一致性:
+                            //   false    : 什么也不做 (default)
+                            //   true     : 确保任何地方使用都是一致的
+                            //   "single" : 需要单引号
+                            //   "double" : 需要双引号
+    "undef": true,       // true: 要求所有 non-global 变量声明 (prevents global leaks)
+    "unused": false, // true: 要求所有已定义的变量，但未使用  "strict"
+    "strict": true,     // true: 是否要求所有功能严格模式下运行
+    "trailing": true,    // true: Prohibit trailing whitespaces
+    "maxparams": false,         // 允许最多参数个数
+    "maxdepth": 4,              // 最大嵌套深度 (在函数体内)
+    "maxstatements": false,    // {int} Max number statements per function
+    "maxcomplexity": 10,    // {int} Max cyclomatic complexity per function
+    "maxlen": 150,       // {int} Max number of characters per line
+
+    // 宽松选项
+    "asi": false,     // 控制“缺少分号”的警告
+    "boss": false,     // true: Tolerate assignments where comparisons would be expected
+    "debug": false,     // true: Allow debugger statements e.g. browser breakpoints.
+    "eqnull": false,     // true: Tolerate use of `== null`
+    "es5": false,     // true: Allow ES5 syntax (ex: getters and setters)
+    "esnext": false,     // true: Allow ES.next (ES6) syntax (ex: `const`)
+    "evil": true,     // 控制eval使用警告
+    "expr": false,      // true: Tolerate `ExpressionStatement` as Programs
+    "funcscope": false,     // true: Tolerate defining variables inside control statements"
+    "globalstrict": false,     // true: Allow global "use strict" (also enables 'strict')
+    "iterator": false,     // true: Tolerate using the `__iterator__` property
+    "lastsemic": false,     // true: Tolerate omitting a semicolon for the last statement of a 1-line block
+    "laxbreak": false,     // true: Tolerate possibly unsafe line breakings
+    "laxcomma": false,     // true: Tolerate comma-first style coding
+    "loopfunc": false,     // true: Tolerate functions being defined in loops
+    "multistr": false,     // true: Tolerate multi-line strings
+    "proto": false,     // true: Tolerate using the `__proto__` property
+    "scripturl": false,     // true: Tolerate script-targeted URLs
+    "smarttabs": false,     // true: Tolerate mixed tabs/spaces when used for alignment
+    "shadow": false,     // true: Allows re-define variables later in code e.g. `var x=1; x=2;`
+    "sub": false,     // true: Tolerate using `[]` notation when it can still be expressed in dot notation
+    "supernew": false,     // true: Tolerate `new function () { ... };` and `new Object;`
+    "validthis": false,     // true: Tolerate using this in a non-constructor function
+
+    // Environments
+    "browser": true,     // Web Browser (window, document, etc)
+    "couch": false,    // CouchDB
+    "devel": true,     // Development/debugging (alert, confirm, etc)
+    "dojo": true,    // Dojo Toolkit
+    "jquery": true,    // jQuery
+    "mootools": true,    // MooTools
+    "node": true,     // Node.js
+    "nonstandard": true,    // Widely adopted globals (escape, unescape, etc)
+    "prototypejs": true,    // Prototype and Scriptaculous
+    "rhino": false,    // Rhino
+    "worker": false,    // Web Workers
+    "wsh": false,    // Windows Scripting Host
+    "yui": false,    // Yahoo User Interface
+
+    // Legacy
+    "nomen": false,     // true: Prohibit dangling `_` in variables
+    "onevar": false,     // true: Allow only one `var` statement per function
+    "white": true,    // true: 严格检查空格和缩进的规则
+
+    // 自定义全局变量
+    "predef": ["app", "angular", "reqUrl", "$scope", "urlConfig", "sdsomwebApp", "NProgress", "echarts"]
+}

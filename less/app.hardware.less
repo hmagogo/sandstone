@@ -1,0 +1,1029 @@
+/*硬件管理节点*/
+.hardware-node {
+    /*width: 402px;*/
+    width: 49%;
+    float: left;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.node-view .hhd,
+.node-view .hhd-light,
+.node-view .ssd-light,
+.node-view .ssd {
+    position: relative;
+    float: left;
+    width: 15px;
+    height: 49px;
+    margin: 5px 7px 5px 2px;
+}
+
+.node-view .hhd {
+    background: url("../images/hardware/hhd.png") no-repeat;
+    width: 33px;
+    height: 38px;
+}
+
+.node-view .hhd-light {
+    background: url("../images/hardware/hdd_light_on.gif") no-repeat;
+    width: 33px;
+    height: 38px;
+}
+
+.node-view .ssd {
+    background: url("../images/hardware/ssd.png") no-repeat;
+    width: 33px;
+    height: 38px;
+}
+
+.node-view .ssd-light {
+    background: url("../images/hardware/ssd_light_on.gif") no-repeat;
+    width: 33px;
+    height: 38px;
+}
+
+.node-view .hhd > .glyphicon,
+.node-view .hhd-light > .glyphicon,
+.node-view .ssd-light > .glyphicon,
+.node-view .ssd > .glyphicon {
+    position: absolute;
+    display: none;
+}
+.node-view .ssd > .ssd-sign {
+    display: inline-block;
+    top: 50%;
+    margin-top: -8px;
+    left: 50%;
+    margin-left: -6px;
+}
+.node-view .red {
+    background-color: #f3f7f8;
+}
+.node-view .red > .sign {
+    display: inline-block;
+    color: red;
+    top: -8px;
+    left: 100%;
+    margin-left: -5px;
+}
+.node-view .text > .text-sign {
+    display: inline-block;
+    top: 100%;
+    margin-top: 2px;
+    left: 50%;
+    margin-left: -8px;
+    font-size: 8px;
+    color: #cacaca;
+}
+.node-view .title {
+    float: left;
+    height: 45px;
+    line-height: 45px;
+    width: 75px;
+    font-weight: bold;
+}
+
+.hardware-node .hardware-row {
+    padding-bottom: 10px;
+}
+
+.nodeCycleWhite {
+    background: url(../images/hardware/nodeCycleWhite.png) no-repeat center center;
+    width: 105px;
+    height: 45px;
+}
+
+.outerBorder {
+    border: 1px solid #d9dada;
+    border-radius: 5px;
+}
+
+.nodeCapacitybox {
+    width: 65px;
+    height: 45px;
+
+    &:hover .stopNodeCapacity{
+        background: url(../images/hardware/stopNodeCapacity.png) no-repeat center center;
+        width: 63px;
+        height: 46px;
+        display: inline-block;
+    }
+
+    &:hover .stopNodeCapacity-disable{
+        background: url(../images/hardware/stopNodeCapacity-disable.png) no-repeat center center;
+        width: 63px;
+        height: 46px;
+        display: inline-block;
+    }
+}
+
+/**/
+.hardware-node .ip {
+    font-size: 12px;
+    line-height: 25px;
+    padding-left: 2px;
+    color: #cacaca;
+}
+.hardware-node .network {
+    text-align: right;
+    line-height: 25px;
+}
+.hardware-node .network .card {
+    position: relative;
+    /*float: right;*/
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    border: 1px solid #ddd;
+    margin: 2px 5px 2px 2px;
+    background: #ddd url(../images/hardware/pic_ssd.png) no-repeat center center;
+}
+.hardware-node .network .card > .sign {
+    position: absolute;
+}
+.hardware-node .network .card > .sign {
+    display: none;
+}
+.hardware-node .network .card img {
+    width: 25px;
+    height: 25px;
+}
+.hardware-node .network .red > .sign {
+    display: inline-block;
+    color: red;
+    top: -8px;
+    left: 100%;
+    margin-left: -5px;
+}
+/*硬件管理节点 end*/
+
+/*硬件管理节点 tip提示重定义*/
+.node-tip {
+    cursor: pointer;
+    position: relative;
+}
+
+.node-tip .solidPlace {
+    position: absolute;
+    top: -7px;
+    left: 50%;
+}
+
+.node-tip .disk-warning {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    z-index: 99;
+    width: 15px;
+    height: 15px;
+    background: url("../images/hardware/warning.png") no-repeat;
+    background-size: 15px 15px;
+}
+
+.node-tip .disk-danger {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    z-index: 99;
+    width: 15px;
+    height: 15px;
+    background: url("../images/hardware/danger.png") no-repeat;
+    background-size: 15px 15px;
+}
+
+.node-tip .tip-msg {
+    visibility: hidden;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    z-index: 999;
+    min-width: 85px;
+    margin-left: -14px;
+    padding: 6px;
+    opacity: 0.8;
+    color: #FFFFFF;
+    background-color: #353535;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 1px 0 rgba(255, 255, 255, .5) inset;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .4);
+    text-align: left;
+    font-size: 12px;
+}
+
+.node-tip .tip-msg:before {
+    top: -5px;
+    width: 0;
+    height: 0;
+    z-index: 999;
+    position: absolute;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #353535;
+    content: " ";
+    left: 8px;
+}
+
+.node-tip:hover {
+   /* border: 0;*/ /* IE6 fix */
+}
+
+.node-tip:hover .tip-msg {
+    visibility: visible;
+}
+/*硬件管理节点 tip提示重定义 end*/
+
+/*缩率图*/
+.node-thumbnail {
+    background: url('../images/hardware/thumbnail_03.png') no-repeat;
+    width: 229px;
+    height: 53px;
+}
+.node-thumbnail2 {
+    background: url('../images/hardware/thumbnail_04.png') no-repeat;
+    width: 150px;
+    height: 50px;
+}
+.node-thumbnail:hover,
+.node-thumbnail:focus,
+.node-thumbnail2:hover,
+.node-thumbnail2:focus {
+    outline: 0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    box-shadow: 0 0 6px 1px rgba(66, 155, 199, 0.9);
+    cursor: pointer;
+    overflow: visible;
+}
+
+.smNodeSelect {
+    background: url('../images/hardware/thumbnail_04_select.png') no-repeat left bottom;
+    width: 150px;
+    height: 50px;
+}
+
+.smNodeSelect-border {
+    outline: 0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    -webkit-box-shadow: 0px 0px 6px 2px #30A4DF;
+    box-shadow: 0px 0px 6px 2px #30A4DF;
+    cursor: pointer;
+    overflow: visible;
+}
+
+.nodeWarn {
+    outline: 0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    box-shadow: 0 0 6px 1px rgba(230,176,88, 0.9);
+    cursor: pointer;
+    overflow: visible;
+}
+
+.nodeDown {
+    outline: 0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    box-shadow: 0 0 6px 1px rgba(239, 89, 90, 0.9);
+    cursor: pointer;
+    overflow: visible;
+}
+
+.small-pic {
+    background: url('../images/hardware/thumbnail_02.png') no-repeat left bottom;
+    z-index: 1;
+}
+
+.small-pic-select {
+    background: url('../images/hardware/thumbnail_01.png') no-repeat left bottom;
+    z-index: 99;
+}
+
+.small-pic-frame {
+    background-color: #ffffff;
+    border: 1px solid #DCDDDD;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    position: relative;
+    width: 146px;
+    height: 54px;
+    margin: 0 auto;
+}
+
+.hardware-node-cmd {
+    font-size: 12px;
+    color: #919191;
+    text-align: center;
+    cursor: pointer;
+    position: absolute;
+    top: -55px;
+    width: 150px;
+    margin-left: -8px;
+}
+
+.on-bottom {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 0 20px 10px 0px;
+}
+
+/*缩率图 end*/
+
+.small-pic-frame:hover,
+.small-pic-frame:focus,
+.hardware-node:hover,
+.hardware-node:focus {
+    border-color: #00a0e9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+    cursor: pointer;
+    overflow: visible;
+}
+
+.node-frame-right-top {
+    -color: #f3f7f8;
+    border: 1px solid #d9dada;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding: 10px;
+    margin: 5px 0 0 0;
+    height: 110px;
+    line-height: 23px;
+    font-size: 12px;
+    color: #8A8A8A;
+}
+.node-frame-right-top .node-name {
+    float: left;
+    -color: #ffffff;
+    border: 1px solid #d9dada;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    padding: 10px 5px;
+    font-size: 18px;
+    margin-top: 20px;
+}
+.node-frame-right-top .node-summary {
+    float: left;
+    margin-left: 10px;
+}
+.node-frame-right-bottom {
+    -color: #ffffff;
+    border: 1px solid #d9dada;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 10px;
+    margin: -1px 0 5px 0;
+    height: 328px;
+    line-height: 25px;
+    font-size: 12px;
+    color: #8A8A8A;
+}
+
+.tips {
+    cursor: help;
+    position: relative;
+}
+
+.tips span {
+    visibility: hidden;
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    z-index: 999;
+    min-width: 85px;
+    margin-left: -14px;
+    padding: 6px;
+    opacity: 0.8;
+    color: #FFFFFF;
+    -color: #353535;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 1px 0 rgba(255, 255, 255, .5) inset;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .4);
+    text-align: left;
+    font-size: 12px;
+}
+
+.tips span i {
+    top: -5px;
+    width: 0;
+    height: 0;
+    z-index: 999;
+    position: absolute;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #353535;
+}
+
+.tips:hover {
+    border: 0; /* IE6 fix */
+}
+
+.tips:hover span {
+    visibility: visible;
+}
+
+.node-ok {
+    border: 1px solid #d9dada;
+    -color: #ffffff;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.node-down {
+    opacity: 0.8;
+    border-radius: 5px;
+    -color: #ef5954;
+   /* border-color: #f00;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(255, 0, 0, 0.8);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(255, 0, 0, 0.8);
+    cursor: pointer;*/
+}
+
+.node-warning {
+    background: url("../images/hardware/warning.png") no-repeat;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: -8px;
+    right: -8px;
+}
+
+.node-danger {
+    background: url("../images/hardware/danger.png") no-repeat;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: -8px;
+    right: -8px;
+}
+
+.node-selected {
+    border-color: #00a0e9;
+    border-radius: 4px;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 4px rgb(3, 115, 211);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 4px rgb(3, 115, 211);
+}
+
+.nodeIp {
+    color: white;
+    position: absolute;
+    bottom: 1px;
+    left: 40px;
+}
+
+.node-fl-c3 {
+    float: left;
+    color: #353535;
+}
+
+.node-fl-c8 {
+    float: left;
+    color: #8a8a8a;
+}
+
+.node-fr-c8 {
+    float: right;
+    color: #00a0e9;
+}
+
+.node-pic {
+    background: url('../images/main/pic_line_text2.png') no-repeat left bottom;
+}
+
+/*修改IP节点table样式*/
+.node-update-table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 0;
+}
+
+.node-update-table > thead > tr > th,
+.node-update-table > tbody > tr > th,
+.node-update-table > tfoot > tr > th,
+.node-update-table > thead > tr > td,
+.node-update-table > tbody > tr > td,
+.node-update-table > tfoot > tr > td {
+    padding: 4px 10px;
+    line-height: 1.42857143;
+    vertical-align: middle;
+    text-align: center;
+    /*border-top: 1px solid #ddd;*/
+}
+
+.node-update-table > thead > tr > th {
+    vertical-align: bottom;
+    /*border-bottom: 2px solid #ddd;*/
+}
+
+.node-update-table > caption + thead > tr:first-child > th,
+.node-update-table > colgroup + thead > tr:first-child > th,
+.node-update-table > thead:first-child > tr:first-child > th,
+.node-update-table > caption + thead > tr:first-child > td,
+.node-update-table > colgroup + thead > tr:first-child > td,
+.node-update-table > thead:first-child > tr:first-child > td {
+    border-top: 0;
+}
+
+.node-update-table > tbody + tbody {
+    border-top: 2px solid #ddd;
+}
+/*修改IP节点table样式 end*/
+
+/*ip管理表格样式*/
+.ip-table-wrapper {
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    max-height: 300px;
+    overflow-y: auto;
+}
+.ip-table {
+    width: 100%;
+    max-width: 100%;
+   /* margin-bottom: 20px;*/
+    /*border: 1px solid #ddd;*/
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.ip-table > thead > tr > th,
+.ip-table > tbody > tr > th,
+.ip-table > tfoot > tr > th,
+.ip-table > thead > tr > td,
+.ip-table > tbody > tr > td,
+.ip-table > tfoot > tr > td {
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+    /*border: 1px solid #ddd;*/
+    text-align: center;
+}
+
+.ip-table > thead > tr > th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #ddd;
+}
+
+.ip-table > tbody > tr > td {
+    vertical-align: middle;
+}
+
+.ip-table > caption + thead > tr:first-child > th,
+.ip-table > colgroup + thead > tr:first-child > th,
+.ip-table > thead:first-child > tr:first-child > th,
+.ip-table > caption + thead > tr:first-child > td,
+.ip-table > colgroup + thead > tr:first-child > td,
+.ip-table > thead:first-child > tr:first-child > td {
+    border-top: 0;
+}
+
+.ip-table > thead > tr > th,
+.ip-table > thead > tr > td {
+    background-color: #f9fafc;
+    color: #babcbb;
+}
+
+/*.ip-table > thead > tr:first-child > th:first-child {
+    border-radius: 5px;
+}*/
+
+.ip-table > tbody + tbody {
+    border-top: 2px solid #ddd;
+}
+
+/*.table-bordered > thead > tr > th,
+.table-bordered > thead > tr > td {
+    border-bottom-width: 2px;
+}*/
+
+.border-right {
+    border-right: 1px solid #ddd;
+}
+.text-left {
+    text-align: left !important;
+}
+
+.br-gray {
+    border-right: 1px solid #d9dada;
+}
+
+.bl-gray {
+    border-left: 1px solid #d9dada;
+}
+/*ip管理表格样式 end*/
+
+.nicBlock {
+    background: url(../images/hardware/nic-kilomega.png) no-repeat;
+    background-size: 30px 30px;
+    float: left;
+    width: 30px;
+    height: 30px;
+    margin: 6px 3px;
+}
+
+.nic-chain {
+    background: url("../images/hardware/nic-chain.png");
+    background-size: 25px 10px;
+    width: 25px;
+    height: 10px;
+    position: absolute;
+    left: -18px;
+    top: 10px;
+}
+
+.nic-binding {
+    background: url("../images/hardware/nic-binding.png");
+    background-size: 30px 30px;
+    width: 30px;
+    height: 30px;
+    position: relative;
+}
+
+.nic-binding i {
+    position: absolute;
+    bottom: -9px;
+    left: 50%;
+}
+
+.nics-warning {
+    background: url("../images/hardware/warning.png") no-repeat;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -5px;
+    right: -5px;
+    background-size: 10px 10px;
+}
+
+.nics-warning2 {
+    background: url("../images/hardware/warning.png") no-repeat;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    float: left;
+    margin-left: 60px;
+    background-size: 10px 10px;
+}
+
+.nics-danger {
+    background: url("../images/hardware/danger.png") no-repeat;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -5px;
+    right: -5px;
+    background-size: 10px 10px;
+}
+
+.nics-danger2 {
+    background: url("../images/hardware/danger.png") no-repeat;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    float: left;
+    margin-left: 60px;
+    background-size: 10px 10px;
+}
+
+.hardware-input input[type="text"] {
+    margin: 0;
+    padding: 0 2px;
+    width: 110px;
+    font-family:"Times New Roman",Georgia,Serif;
+    font-size: 13px;
+    vertical-align: middle;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border: 1px solid #d9dada;
+}
+
+.progress-bar-sm {
+    float: left;
+    width: 0;
+    height: 100%;
+    font-size: 12px;
+    line-height: 20px;
+    color: #fff;
+    text-align: center;
+    -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    -webkit-transition: width .6s ease;
+    -o-transition: width .6s ease;
+    transition: width .6s ease;
+}
+
+.dropdown-select {
+    background-color: #3d4d62;
+    border: none !important;
+    margin-top: -22px !important;
+    margin-left: 0 !important;
+    min-width: 90px !important;
+    padding: 0 !important;
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    border-radius: 0 !important;
+}
+
+.dropdown-dropdown-input {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+
+    border: none !important;
+    margin-top: -22px !important;
+    /*margin-left: 8px !important;*/
+    min-width: 90px !important;
+    padding: 0 !important;
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    border-radius: 0 !important;
+}
+
+.dropdown-dropdown-input input[type="text"] {
+    width: 120px;
+    margin: 0;
+    padding: 0 2px;
+    height: 22px;
+    font-family:"Times New Roman",Georgia,Serif;
+    font-size: 13px;
+    vertical-align: middle;
+    text-align: center;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+
+.dropdown-wrap {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 4px;
+}
+
+.capacity-down {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.top-arrow-2:before {
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    display: inline-block;
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+    border-bottom: 6px solid #ccc;
+    border-bottom-color: #ccc;
+    content: '';
+}
+
+.top-arrow-2 i:before {
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    display: inline-block;
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+    border-bottom: 6px solid #ccc;
+    border-bottom-color: #fff;
+    content: '';
+}
+
+.dropdown-li {
+    font-size: 12px;
+    padding-left: 8px;
+    cursor:pointer;
+}
+
+.dropdown-li > span {
+    padding-left: 5px;
+}
+
+.m-b-10 {
+    margin-bottom: 10px;
+}
+
+.node-font {
+    color: #fff;
+    height: 45px;
+    display: inline-block;
+}
+
+.normal-light {
+    background: url("../images/hardware/normal-light.png") no-repeat;
+    background-size: 10px 10px;
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.risk-light {
+    background: url("../images/hardware/riskLight.png") no-repeat;
+    background-size: 10px 10px;
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.leftBox {
+    position: absolute;
+    right: 0;
+    padding: 2px;
+}
+.leftBox .leftArrows {
+    background: url(../images/hardware/leftArrows.png) no-repeat;
+    background-size: 20px;
+    display: inline-block;
+    width: 20px;
+    height: 9px;
+}
+.leftBox .box {
+    display: none;
+}
+.dilatation {
+    background: url(../images/configure/add.png) no-repeat;
+    background-size: 15px 15px;
+    width: 15px;
+    height: 15px;
+    float: left;
+    margin-top: 2px;
+    margin-right: 3px;
+}
+
+.shutdown {
+    background: url("../images/hardware/shutdown.png") no-repeat;
+    background-size: 15px;
+    width: 15px;
+    height: 15px;
+    float: left;
+    margin-top: 3px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.reboot {
+    background: url("../images/hardware/reboot.png") no-repeat;
+    background-size: 15px;
+    width: 15px;
+    height: 15px;
+    float: left;
+    margin-top: 3px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.maintenance {
+    background: url("../images/hardware/maintenance.png") no-repeat;
+    background-size: 15px;
+    width: 15px;
+    height: 15px;
+    float: left;
+    margin-top: 3px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.replaceDisk {
+    background: url("../images/hardware/replace_disk.png") no-repeat;
+    background-size: 15px;
+    width: 15px;
+    height: 15px;
+    float: left;
+    margin-top: 3px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.replaceDisk-disable {
+    background: url("../images/hardware/replace_disk_disable.png") no-repeat;
+    background-size: 15px;
+    width: 15px;
+    height: 15px;
+    float: left;
+    margin-top: 3px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.pointlamp {
+    background: url("../images/hardware/pointlamp.png") no-repeat;
+    background-size: 15px;
+    width: 15px;
+    height: 15px;
+    float: left;
+    margin-top: 3px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.disabledlamp {
+    background: url("../images/hardware/disabledlamp.png") no-repeat;
+    background-size: 15px;
+    width: 15px;
+    height: 15px;
+    float: left;
+    margin-top: 3px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.replaceNetwork {
+    background: url("../images/hardware/replaceNetwork.png") no-repeat;
+    background-size: 15px;
+    width: 15px;
+    height: 15px;
+    float: left;
+    margin-top: 3px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.change {
+    background: url("../images/hardware/change.png") no-repeat;
+    background-size: 13px 13px;
+    width: 13px;
+    height: 13px;
+    margin-top: 3px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.completed {
+    background-image: url(../images/main/completed.png);
+    background-repeat: no-repeat;
+    background-size: 15px 15px;
+    width: 15px;
+    height: 15px;
+    margin-top: 3px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.clusterImg {
+    background: url("../images/hardware/clusterImg.png") no-repeat;
+    background-size: 150px;
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+}
+
+// 分辨率 < 1440
+@media (max-width: 1440px) {
+    .node-view .hhd {
+        background: url("../images/hardware/hhd.png") no-repeat -1px;
+        background-size: 26px 32px;
+        width: 26px;
+        height: 32px;
+    }
+
+    .node-view .hhd-light {
+        background: url("../images/hardware/hdd_light_on.gif") no-repeat;
+        background-size: 26px 32px;
+        width: 26px;
+        height: 32px;
+    }
+
+    .node-view .ssd {
+        background: url("../images/hardware/ssd.png") no-repeat -1px;
+        background-size: 26px 32px;
+        width: 26px;
+        height: 32px;
+    }
+
+    .node-view .ssd-light {
+        background: url("../images/hardware/ssd_light_on.gif") no-repeat;
+        background-size: 26px 32px;
+        width: 26px;
+        height: 32px;
+    }
+
+    .nic-binding {
+        background: url("../images/hardware/nic-binding.png");
+        background-size: 20px 20px;
+        width: 20px;
+        height: 20px;
+        position: relative;
+    }
+    .nicBlock {
+        background: url(../images/hardware/nic-kilomega.png) no-repeat;
+        background-size: 20px 20px;
+        float: left;
+        width: 20px;
+        height: 20px;
+        margin: 6px 2px;
+    }
+
+}

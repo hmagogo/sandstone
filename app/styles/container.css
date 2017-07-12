@@ -1,0 +1,114 @@
+.fontSize12{
+	font-size:12px;
+}
+.fontSize14{
+	font-size:14px;
+}
+.fontSize16{
+	font-size:16px;
+}
+.fontSize18{
+    font-size:18px;
+}
+.fontSize20{
+    font-size:20px;
+}
+.fontSize24{
+    font-size:24px;
+}
+.fontSize36{
+	font-size:36px;
+}
+.fontWidth600{
+	font-weight:600;
+}
+.grayColor{
+	color: #d9dada;
+}
+.greenColor{
+    color:#60cda9;
+}
+.redColor{
+    color: #ef595a;
+}
+.blackColor{
+    color: #353535;
+}
+
+.floatRight{
+	float:right;
+}
+.floatLeft{
+	float:left;
+}
+.padding0_13{
+	padding: 0 13px;
+}
+.margin5_15{
+	margin: 0px 15px 0 15px;
+    /*border-bottom: 1px dotted #d9dada;*/
+}
+
+.alarmResovledItem {
+    cursor: pointer;
+    text-align: right;
+}
+
+.width15{
+	width:15%;
+}
+.width25{
+	width:25%;
+}
+.width60{
+	width:60%;
+}
+.width100{
+	width:100%;
+}
+.height20{
+	height:20px;
+}
+
+
+.height-1{
+    height:20px;
+}
+
+/*首页饼图部分div样式*/
+.barChartDiv{
+	width:100%;float:left;
+}
+.halfLeft{
+	position: absolute;z-index: 1;text-align: center;width: 44%;
+}
+.halfLeft2{
+	text-align: center;width: 100%;
+}
+.halfRight{
+	width:100%;float:left;text-align:left;
+}
+
+/*系统cpu使用率*/
+.sysCpu{
+    height:25px;
+}
+.sysCpuMain{
+	margin-top:10px;margin-left:30px;text-align:center;
+}
+/*
+.main_badge{
+    background-color:#ef595a;position:absolute;left:15px;top:15px;
+    margin-top: -15px;
+    text-align: left;
+}*/
+
+.main_bg_red {
+    background-color:#ef595a;
+}
+.main_bg_yellow {
+    background-color:#e6b058;
+}
+.marginTop10 {
+    margin-top:10px;
+}   

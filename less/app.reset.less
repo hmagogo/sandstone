@@ -1,0 +1,139 @@
+/* ------------------ 重写 bootstrap ------------------ */
+
+.btn-danger {
+    background-color: #ef595a;
+    &:hover {
+    	background-color: #dd575e;
+    }
+}
+
+.breadcrumb {
+	background-color: #fff;
+	padding: 0px 5px;
+
+	> li + li:before {
+		padding: 0 5px;
+		color: #ccc;
+		content: "\2022\00a0";
+	}
+
+	> .active {
+		color: #353535;
+	}
+}
+
+.form-control.ng-dirty.ng-invalid {
+  border-color: #f05050;
+}
+
+
+/************************  分页  ************************/
+.pagination {
+	> li {
+		> a {
+			cursor: pointer;
+		}
+
+		> span {
+			color: #8a8a8a;
+			// background-color: #ddd;
+			border: 0;
+			padding: 0px 5px;
+
+			&:hover, &:focus {
+				color: #8a8a8a;
+				background-color: #fff;
+			}
+
+			input {
+				width: 30px;
+				height: 20px;
+				text-align: center;
+			}
+
+			// .jump {
+			// 	cursor: pointer;
+
+			// 	&:hover, &:focus {
+			// 		color: #353535;
+			// 		font-weight: bold;
+			// 	}
+			// }
+		}
+	}
+
+	.pre {
+		background: url("../images/storage/page_pre.png") no-repeat;
+		width:20px;
+		height:20px;
+	}
+
+	.pre-disabled {
+		background: url("../images/storage/page_pre_disabled.png") no-repeat;
+		width:20px;
+		height:20px;
+	}
+
+	.next {
+		background: url("../images/storage/page_next.png") no-repeat;
+		width:20px;
+		height:20px;
+	}
+
+	.next-disabled {
+		background: url("../images/storage/page_next_disabled.png") no-repeat;
+		width:20px;
+		height:20px;
+	}
+}
+
+.jump {
+	cursor: pointer;
+
+	&:hover, &:focus {
+		color: #353535;
+		font-weight: bold;
+	}
+}
+
+.open > .inline-table {
+    display: inline-table;
+
+    table tbody td {
+    	color: #8a8a8a;
+    	padding: 0;
+    }
+}
+
+.tooltip {
+    white-space: nowrap;
+
+    &.bottom .tooltip-arrow {
+	    opacity: 0.9;
+	    filter: alpha(opacity=90);
+	    border-bottom-color: #353535;
+	}
+	&.bottom-left .tooltip-arrow {
+	    opacity: 0.9;
+	    filter: alpha(opacity=90);
+	    border-bottom-color: #353535;
+	}
+	&.bottom-right .tooltip-arrow {
+	    opacity: 0.9;
+	    filter: alpha(opacity=90);
+	    border-bottom-color: #353535;
+	}
+}
+
+.tooltip-inner {
+    opacity: 0.9;
+    filter: alpha(opacity=90);
+    background-color: #353535;
+}
+
+// 分辨率 < 1440
+@media (max-width: 1440px) {
+	.breadcrumb {
+		margin-bottom: 5px;
+	}
+}

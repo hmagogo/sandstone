@@ -1,0 +1,543 @@
+<div class="container-fluid sds-frame">
+
+    <!-- import modal -->
+    <div data-ng-include="'views/blockStorage/modal.html'"></div>
+    <!-- / import modal -->
+
+    <div style="height: 100%;" ng-hide="block.showPhysicalPool">
+        <div id="clearBtn" style="float:left;">
+            <button type="button" class="btn btn-gray" ng-click="block.exhibition($event, 'lunView')">&nbsp;卷&nbsp;</button>
+            <div class="btn-group">
+                <button class="btn btn-gray" ng-click="block.exhibition($event, 'targetView')">iSCSI目标</button>
+                <button class="btn btn-gray" ng-click="block.exhibition($event, 'initiatorView')">iSCSI启动器</button>
+            </div>
+            <button class="btn btn-gray" ng-click="block.exhibition($event, 'blockView')">块设备客户端</button>
+        </div>
+
+        <!-- 存储资源：卷 DIV -->
+        <div ng-show="block.viewCtrl === 'lunView'" style="height: 100%;">
+            <div style="height: 60%;">
+                <div style="float: right; padding-bottom: 5px;">
+                    <button class="btn btn-sm btn-success" ng-click="block.showModal('addLunModal', null)">
+                        <i class="addition"></i>创建卷
+                    </button>
+                    <div style="float: right; margin-top: 5px; margin-left: 5px;">
+                        <page total-count="volumePage.totalCount" page-count="volumePage.pageSize"
+                            select-size="getVolumes(volumePage.pageSize, currentPage)"
+                            current-page="volumePage.currentPage" go-page="getVolumes(volumePage.pageSize, currentPage)"></page>
+                    </div>
+                </div>
+                <div class="cls"></div>
+                <div style="border: 1px solid #CCCCCC; border-radius: 6px; height:85%; margin-top: 10px;">
+                    <table class="table table-responsive table-hover alarm-table">
+                        <thead>
+                            <tr>
+                              <!-- <th class="b-r-1 text-center" width="5%">ID</th> -->
+                              <th class="b-r-1 text-center">名称</th>
+                              <th class="b-r-1 text-center">存储策略</th>
+                              <th class="b-r-1 text-center">所属物理池</th>
+                              <th class="b-r-1 text-center">存储容量</th>
+                              <th class="b-r-1 text-center">源自</th>
+                              <th class="b-r-1 text-center">状态</th>
+                              <th class="b-r-1 text-center">类型</th>
+                              <th class="text-center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="lun in block.currentPageLunList track by $index" ng-click="block.lunSelected($event, lun)" id="lun{{$index+1}}">
+                              <!-- <td class="b-r-1 text-center" width="5%">{{$index}}</td> -->
+                              <td class="text-center">{{lun.volumeName.split('.')[1]}}</td>
+                              <td class="text-center">{{lun.replication}}副本</td>
+                              <td class="text-center">{{lun.poolName.split('@')[0]}}</td>
+                              <td class="text-center">{{lun.capacity_bytes | BytesToKMGTB}}</td>
+                              <td class="text-center">{{lun.origin}}</td>
+                              <td class="text-center">{{lun.status}}</td>
+                              <td class="text-center">{{lun.type}}</td>
+                              <td class="text-center">
+                                <div ng-click="block.showModal('updateVolumeModal')" class="operation" ng-class="{true: 'resize-disable', false: 'resize'}[lun.status=='正在删除']">
+                                    <div class="tip-msg">调整容量</div>
+                                </div>
+                                <div ng-click="block.showModal('createSnapshotModal', null)" class="operation" ng-class="{true: 'snapshot-disable', false: 'create-snapshot'}[lun.status=='正在删除']">
+                                    <div class="tip-msg">创建快照</div>
+                                </div>
+                                <div ng-click="block.showMapOrUmap($event, lun)" class="volumeMap operation">
+                                    <div class="tip-msg">映射/解除映射</div>
+                                </div>
+                                <div ng-click="block.showModal('deleteLunModal', lun)" class="operation" ng-class="{true: 'delete-disable', false: 'delete'}[lun.status=='正在删除']">
+                                    <div class="tip-msg">删除</div>
+                                </div>
+                              </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="shrink" ng-show="true">
+                    <span class="down" ng-show="true" ng-click="showNodeDropdown()"></span>
+                    <span class="up ng-hide" ng-show="false" ng-click="showNodeUp()"></span>
+                </div>
+            </div>
+            <div style="height: 40%;">
+                <div style="float:left; width:66.66%; height:100%;">
+                    <div>快照详情
+                        <div style="float: right;">
+                            <page total-count="volumeSnapPage.totalCount" page-count="volumeSnapPage.pageSize"
+                                select-size="querySnapshot(volumeSnapPage.pageSize, currentPage)"
+                                current-page="volumeSnapPage.currentPage" go-page="querySnapshot(volumeSnapPage.pageSize, currentPage)"></page>
+                        </div>
+                    </div>
+                    <div style="border: 1px solid #CCCCCC; border-radius: 6px; height:90%; margin-top: 5px;">
+                        <table class="table table-responsive table-hover alarm-table">
+                            <thead>
+                               <tr>
+                                   <th class="b-r-1 text-center" width="8%">快照ID </th>
+                                   <th class="b-r-1 text-center">快照名称</th>
+                                   <th class="b-r-1 text-center">描述 </th>
+                                   <th class="b-r-1 text-center" width="10%"> 大小 </th>
+                                   <th class="b-r-1 text-center" width="20%">创建时间</th>
+                                   <th class="b-r-1 text-center" width="10%">状态</th>
+                                   <th class="text-center" width="22%"> 操作 </th>
+                               </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="snapshot in block.currentPageSnapList">
+                                    <td class="text-center">{{snapshot.id}}</td>
+                                    <td class="text-center autoHideTableText" title="">
+                                        {{snapshot.snapName}}
+                                    </td>
+                                    <td class="text-center autoHideTableText" title="">
+                                        {{snapshot.remark}}
+                                    </td>
+                                    <td class="text-center">{{snapshot.size | BytesToKMGTB}}</td>
+                                    <td class="text-center">{{snapshot.createTime}}</td>
+                                    <td class="text-center">{{snapshot.status}}</td>
+                                    <td class="text-center">
+                                        <div ng-click="block.showModal('updateDescribeModal', snapshot)" class="rename operation">
+                                            <div class="tip-msg">修改描述</div>
+                                        </div>
+                                        <div ng-click="block.showModal('rollbackSnapshotModal', snapshot)" class="operation rollback"
+                                            ng-class="{true: 'rollback-disable', false: 'rollback'}[snapshotDisable]">
+                                            <div class="tip-msg">快照回滚</div>
+                                        </div>
+                                        <div ng-click="block.showModal('cloneVolumeModal', snapshot)" class="clone operation">
+                                            <div class="tip-msg">克隆</div>
+                                        </div>
+                                        <div ng-click="block.showMapSnap($event, snapshot)" class="volumeMap operation">
+                                            <div class="tip-msg">映射/解除映射</div>
+                                        </div>
+                                        <div ng-click="block.showModal('deleteSnapshotModal', snapshot)" class="delete operation">
+                                            <div class="tip-msg">删除</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div style="float:right; width:33.33%; height:100%; padding-left: 15px;" ng-show="currentVolume.type != 'blk'">
+                    <div>关联状态
+                        <div style="float: right;">
+                            <page total-count="volumeAclPage.totalCount" page-count="volumeAclPage.pageSize"
+                                select-size="queryVolumeAcls(volumeAclPage.pageSize, currentPage)"
+                                current-page="volumeAclPage.currentPage" go-page="queryVolumeAcls(volumeAclPage.pageSize, currentPage)"></page>
+                        </div>
+                    </div>
+                    <div style="border: 1px solid #CCCCCC; border-radius: 6px; height:90%; margin-top: 5px;">
+                        <table class="table table-responsive table-hover alarm-table">
+                            <thead>
+                                <tr>
+                                  <th class="b-r-1 text-center">iSCSI启动器名称</th>
+                                  <th class="b-r-1 text-center">是否连接</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="acl in block.currentPageVolumeAcl">
+                                  <td class="text-center autoHideTableText">{{acl.name}}</td>
+                                  <td class="text-center">
+                                    <span ng-show="acl.state=='active'">是</span>
+                                    <span ng-show="acl.state!='active'">否</span>
+                                  </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div style="float:right; width:33.33%; height:100%; padding-left: 15px;" ng-show="currentVolume.type == 'blk'">
+                    <div>客户端
+                        <div style="float: right;">
+                            <page total-count="targetPage.totalCount" page-count="targetPage.pageSize"
+                                select-size="getTargets(targetPage.pageSize, currentPage)"
+                                current-page="targetPage.currentPage" go-page="getTargets(targetPage.pageSize, currentPage)"></page>
+                        </div>
+                    </div>
+                    <div style="border: 1px solid #CCCCCC; border-radius: 6px; height:90%; margin-top: 5px;">
+                        <table class="table table-responsive table-hover alarm-table">
+                            <thead>
+                                <tr>
+                                  <th class="b-r-1 text-center">节点名称</th>
+                                  <th class="b-r-1 text-center">IP地址</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="client in block.voluemClientList">
+                                  <td class="text-center autoHideTableText">{{client.name}}</td>
+                                  <td class="text-center">{{client.ip}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 存储资源：卷 DIV END -->
+
+        <!-- iSCSI：iSCSI目标 DIV -->
+        <div ng-show="block.viewCtrl === 'targetView'" style="height: 100%;">
+            <div style="height: 60%;">
+                <div style="float: right; padding-bottom: 5px;">
+                    <button class="btn btn-sm btn-success" ng-click="block.showAddTarget('addTargetModal')">
+                        <i class="addition"></i>
+                        创建iSCSI目标
+                    </button>
+                    <div style="float: right; margin-top: 5px; margin-left: 5px;">
+                        <page total-count="targetPage.totalCount" page-count="targetPage.pageSize"
+                            select-size="getTargets(targetPage.pageSize, currentPage)"
+                            current-page="targetPage.currentPage" go-page="getTargets(targetPage.pageSize, currentPage)"></page>
+                    </div>
+                </div>
+                <div class="cls"></div>
+                <div style="border: 1px solid #CCCCCC; border-radius: 6px; height:85%; margin-top: 10px;">
+                    <table class="table table-responsive table-hover alarm-table">
+                        <thead>
+                            <tr>
+                              <th class="b-r-1 text-center">名称</th>
+                              <th class="b-r-1 text-center" width="10%">模式</th>
+                              <th class="b-r-1 text-center" width="10%">是否连接</th>
+                              <th class="b-r-1 text-center" width="25%">所属节点</th>
+                              <th class="b-r-1 text-center" width="15%">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="target in block.currentPageTargetList" ng-click="block.targetSelected($event, target)" id="target{{$index+1}}">
+                                <td class="text-center autoHideTableText">{{target.name}}</td>
+                                <td class="text-center">{{target.pattern}}</td>
+                                <td class="text-center">
+                                    <span ng-show="target.status=='active'">是</span>
+                                    <span ng-show="target.status!='active'">否</span>
+                                </td>
+                                <td class="text-center">{{target.node.toString()}}</td>
+                                <td class="text-center">
+                                    <div ng-click="block.showModal('setChapModal', target)" class="set-chap operation" ng-show="systemConfig.isISCSIEnable">
+                                        <div class="tip-msg">CHAP设置</div>
+                                    </div>
+                                    <div ng-click="block.showDetachOrAttach('attachOrDetachModal', target, 'detach')" class="detach operation">
+                                        <div class="tip-msg">解除节点</div>
+                                    </div>
+                                    <div ng-click="block.showDetachOrAttach('attachOrDetachModal', target, 'attach')" class="attach operation">
+                                        <div class="tip-msg">挂载节点</div>
+                                    </div>
+                                    <div ng-click="block.volumesMapTargetModal('volumesMapTargetModal', target)" class="volumeMap operation">
+                                        <div class="tip-msg">映射</div>
+                                    </div>
+                                    <div ng-click="block.showModal('deleteTargetModal', target)" class="delete operation">
+                                        <div class="tip-msg">删除</div>
+                                    </div>                          
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="shrink" ng-show="true">
+                    <span class="down" ng-show="true" ng-click="showNodeDropdown()"></span>
+                    <span class="up ng-hide" ng-show="false" ng-click="showNodeUp()"></span>
+                </div>
+            </div>
+            <div style="height: 40%;">
+                <div style="float:left; height:100%; width:33.33%;">
+                    <div>关联：卷
+                    <div style="float: right;">
+                            <page total-count="targetVolumePage.totalCount" page-count="targetVolumePage.pageSize"
+                                select-size="queryTargetVolumes(targetVolumePage.pageSize, currentPage)"
+                                current-page="targetVolumePage.currentPage" go-page="queryTargetVolumes(targetVolumePage.pageSize, currentPage)"></page>
+                        </div>
+                    </div>
+                    <div style="border: 1px solid #CCCCCC; border-radius: 6px; height:90%; margin-top: 5px;">
+                        <table class="table table-responsive table-hover alarm-table">
+                            <thead>
+                                <tr>
+                                  <th class="b-r-1 text-center" width="15%">ID</th>
+                                  <th class="b-r-1 text-center">名称</th>
+                                  <th class="b-r-1 text-center">所属资源池</th>
+                                  <th class="b-r-1 text-center">容量</th>
+                                  <th class="b-r-1 text-center" width="15%">状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="lun in block.currentPageTgtVolume">
+                                  <td class="text-center">{{lun.lid}}</td>
+                                  <td class="text-center autoHideTableText">{{lun.name.split('.')[1]}}</td>
+                                  <td class="text-center">{{lun.poolName.split('@')[0]}}</td>
+                                  <td class="text-center">{{lun.size | BytesToKMGTB}}</td>
+                                  <td class="text-center">{{lun.status}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div style="float:left; height:100%; width:33.33%; padding-left: 15px;">
+                    <div>关联：iSCSI启动器
+                        <div style="float: right;">
+                            <page total-count="targetAclPage.totalCount" page-count="targetAclPage.pageSize"
+                                select-size="queryTargetAcl(targetAclPage.pageSize, currentPage)"
+                                current-page="targetAclPage.currentPage" go-page="queryTargetAcl(targetAclPage.pageSize, currentPage)"></page>
+                        </div>
+                    </div>
+                    <div style="border: 1px solid #CCCCCC; border-radius: 6px; height:90%; margin-top: 5px;">
+                        <table class="table table-responsive table-hover alarm-table">
+                            <thead>
+                                <tr>
+                                  <th class="b-r-1 text-center">启动器名称</th>
+                                  <th class="b-r-1 text-center">IP地址</th>
+                                  <th class="b-r-1 text-center">是否连接</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="acl in block.currentPageTgtAclList">
+                                  <td class="text-center">{{acl.name}}</td>
+                                  <td class="text-center">{{acl.ip}}</td>
+                                  <td class="text-center">
+                                    <span ng-show="acl.state=='active'">是</span>
+                                    <span ng-show="acl.state!='active'">否</span>
+                                  </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div style="float:left; height:100%; width:33.33%; padding-left: 15px;">
+                    <div>CHAP设置</div>
+                    <div style="border: 1px solid #CCCCCC; border-radius: 6px; height:90%; margin-top: 5px;">
+                        <table class="table table-responsive table-hover alarm-table">
+                            <thead>
+                                <tr>
+                                  <th class="b-r-1 text-center" width="30%">验证方向</th>
+                                  <th class="b-r-1 text-center">用户名</th>
+                                  <th class="b-r-1 text-center" width="15%">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="chap in block.targetChapList" style="border-bottom:1px solid #ccc;">
+                                    <td class="text-center" ng-if="chap.level=='level1'"> 正向验证 </td>
+                                    <td class="text-center" ng-if="chap.level=='level2'"> 反向验证 </td>
+                                    <td class="text-center autoHideTableText"> {{chap.user}}</td>
+                                    <td class="text-center">
+                                        <div ng-click="block.delTargetChap(chap)" class="delete operation">
+                                            <div class="tip-msg">删除</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- iSCSI：iSCSI目标 DIV END -->
+
+        <!-- iSCSI：iSCSI启动器 DIV -->
+        <div ng-show="block.viewCtrl === 'initiatorView'" style="height: 100%;">
+            <div style="height: 60%;">
+                <div style="float: right; padding-bottom: 5px;">
+                    <button class="btn btn-sm btn-success" ng-click="block.showModal('addInitiatorModal', null)">
+                        <i class="addition"></i>
+                        创建iSCSI启动器
+                    </button>
+                    <div style="float: right; margin-top: 5px; margin-left: 5px;">
+                        <page total-count="initiatorPage.totalCount" page-count="initiatorPage.pageSize"
+                            select-size="getAcls(initiatorPage.pageSize, currentPage)"
+                            current-page="initiatorPage.currentPage" go-page="getAcls(initiatorPage.pageSize, currentPage)"></page>
+                    </div>
+                </div>
+                <div class="cls"></div>
+                <div style="border: 1px solid #CCCCCC; border-radius: 6px; height:85%; margin-top: 10px;">
+                    <table class="table table-responsive table-hover alarm-table">
+                        <thead>
+                            <tr>
+                              <!-- <th class="b-r-1 text-center" width="5%">ID</th> -->
+                              <th class="b-r-1 text-center" width="30%">名称</th>
+                              <th class="b-r-1 text-center">是否绑定</th>
+                              <th class="b-r-1 text-center">IP地址</th>
+                              <th class="b-r-1 text-center">是否连接</th>
+                              <th class="b-r-1 text-center">备注</th>
+                              <th class="b-r-1 text-center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="acl in block.currentPageAclList track by $index" ng-click="block.aclSelected($event, acl)" id="acl{{$index+1}}">
+                                <!-- <td class="b-r-1 text-center" width="5%">{{$index}}</td> -->
+                                <td class="text-center autoHideTableText" width="30%">
+                                    {{acl.iqn}}
+                                </td>
+                                <td class="text-center">
+                                    <span ng-show="acl.binding=='yes'">是</span>
+                                    <span ng-show="acl.binding!='yes'">否</span>
+                                </td>
+                                <td class="text-center">{{acl.ip}}</td>
+                                <td class="text-center">
+                                    <span ng-show="acl.state=='active'">是</span>
+                                    <span ng-show="acl.state!='active'">否</span>
+                                </td>
+                                <td class="text-center">{{acl.description}}</td>
+                                <td class="text-center">
+                                    <div  ng-click="block.showModal('unbindTargetModal', acl)" class="unbind operation">
+                                        <div class="tip-msg">解除绑定</div>
+                                    </div>
+                                    <div  ng-click="block.showBindTargetModal('bindTargetModal', acl)" class="bind operation">
+                                        <div class="tip-msg">绑定</div>
+                                    </div>
+                                    <div class="delete operation" ng-click="block.deleteInitiator(acl)">
+                                        <div class="tip-msg">删除</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="shrink" ng-show="true">
+                    <span class="down" ng-show="true" ng-click="showNodeDropdown()"></span>
+                    <span class="up ng-hide" ng-show="false" ng-click="showNodeUp()"></span>
+                </div>
+            </div>
+            <div style="height: 40%;">
+                <div>关联：iSCSI目标
+                    <div style="float: right;">
+                        <page total-count="initiatorTgtPage.totalCount" page-count="initiatorTgtPage.pageSize"
+                            select-size="getInitiatorTarget(initiatorTgtPage.pageSize, currentPage)"
+                            current-page="initiatorTgtPage.currentPage" go-page="getInitiatorTarget(initiatorTgtPage.pageSize, currentPage)"></page>
+                    </div>
+                </div>
+                <div style="border: 1px solid #CCCCCC; border-radius: 6px; height:90%; margin-top: 5px;">
+                    <table class="table table-responsive table-hover alarm-table">
+                        <thead>
+                            <tr>
+                              <th class="b-r-1 text-center" width="40%">名称</th>
+                              <th class="b-r-1 text-center">模式</th>
+                              <th class="b-r-1 text-center">是否连接</th>
+                              <th class="b-r-1 text-center">所属节点</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="target in block.currentPageAclTgt">
+                              <td class="text-center">{{target.name}}</td>
+                              <td class="text-center">
+                                <span ng-show="target.pattern=='readOnly'">只读</span>
+                                <span ng-show="target.pattern=='readWrite'">读写</span>
+                              </td>
+                              <td class="text-center">
+                                <span ng-show="target.state=='active'">是</span>
+                                <span ng-show="target.state!='active'">否</span>
+                              </td>
+                              <td class="text-center">{{target.node.toString()}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- iSCSI：iSCSI启动器 DIV END -->
+
+        <!-- 存储资源：块设备 DIV -->
+        <div ng-show="block.viewCtrl === 'blockView'" style="height: 100%;">
+            <div style="height: 60%;">
+                <div style="float: right; padding-bottom: 5px;">
+                    <!-- <button class="btn btn-sm btn-success" ng-click="block.showModal('addLunModal', null)">
+                        <i class="addition"></i>创建卷
+                    </button> -->
+                    <div style="float: right;">
+                        <page total-count="rbdClientPage.totalCount" page-count="rbdClientPage.pageSize"
+                            select-size="getRbdClient(rbdClientPage.pageSize, currentPage)"
+                            current-page="rbdClientPage.currentPage" go-page="getRbdClient(rbdClientPage.pageSize, currentPage)"></page>
+                    </div>
+                </div>
+                <div class="cls"></div>
+                <div style="border: 1px solid #CCCCCC; border-radius: 6px; height:85%; margin-top: 10px;">
+                    <table class="table table-responsive table-hover alarm-table">
+                        <thead>
+                            <tr>
+                              <th class="b-r-1 text-center" width="5%">ID</th>
+                              <th class="b-r-1 text-center">节点名称</th>
+                              <th class="b-r-1 text-center">ip地址</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="rbd in block.currentPageHostList track by $index" ng-click="block.rbdClientSelected($event, rbd)" id="rbd{{$index+1}}">
+                              <td class="text-center" width="5%">{{$index}}</td>
+                              <td class="text-center">{{rbd.hostid}}</td>
+                              <td class="text-center">{{rbd.bussinessNetwork.ipaddr}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="shrink" ng-show="true">
+                    <span class="down" ng-show="true" ng-click="showNodeDropdown()"></span>
+                    <span class="up ng-hide" ng-show="false" ng-click="showNodeUp()"></span>
+                </div>
+            </div>
+            <div style="height: 40%;">
+                <div>
+                    关联：卷
+                    <div style="float: right;">
+                        <page total-count="clientVolumePage.totalCount" page-count="clientVolumePage.pageSize"
+                            select-size="getClientVolume(clientVolumePage.pageSize, currentPage)"
+                            current-page="clientVolumePage.currentPage" go-page="getClientVolume(clientVolumePage.pageSize, currentPage)"></page>
+                    </div>
+                </div>
+                <div style="float:left; height:100%;">
+                    <div style="border: 1px solid #CCCCCC; border-radius: 6px; height:85%; margin-top: 5px;">
+                    <table class="table table-responsive table-hover alarm-table">
+                        <thead>
+                            <tr>
+                              <th class="b-r-1 text-center" width="5%">ID</th>
+                              <th class="b-r-1 text-center">名称</th>
+                              <th class="b-r-1 text-center">存储策略</th>
+                              <th class="b-r-1 text-center">所属物理池</th>
+                              <th class="b-r-1 text-center">存储容量</th>
+                              <th class="b-r-1 text-center">源自</th>
+                              <th class="b-r-1 text-center">状态</th>
+                              <th class="text-center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="lun in block.currentPageClientVolume track by $index">
+                              <td class="text-center" width="5%">{{$index}}</td>
+                              <td class="text-center">{{lun.volumeName.split('.')[1]}}</td>
+                              <td class="text-center">{{lun.replication}}副本</td>
+                              <td class="text-center">{{lun.poolName.split('@')[0]}}</td>
+                              <td class="text-center">{{lun.capacity_bytes | BytesToKMGTB}}</td>
+                              <td class="text-center">{{lun.origin}}</td>
+                              <td class="text-center">{{lun.status}}</td>
+                              <td class="text-center">
+                                <div ng-click="block.showModal('updateVolumeModal')" class="operation" ng-class="{true: 'resize-disable', false: 'resize'}[lun.status=='正在删除']">
+                                    <div class="tip-msg">调整容量</div>
+                                </div>
+                                <div ng-click="block.showModal('createSnapshotModal', null)" class="operation" ng-class="{true: 'snapshot-disable', false: 'create-snapshot'}[lun.status=='正在删除']">
+                                    <div class="tip-msg">创建快照</div>
+                                </div>
+                                <div ng-click="block.showMapOrUmap($event, lun)" class="rename operation">
+                                    <div class="tip-msg">映射/解除映射</div>
+                                </div>
+                                <div ng-click="block.showModal('deleteLunModal', lun)" class="operation" ng-class="{true: 'delete-disable', false: 'delete'}[lun.status=='正在删除']">
+                                    <div class="tip-msg">删除</div>
+                                </div>
+                              </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+                
+        </div>
+        <!-- 存储资源：块设备 DIV END -->
+
+    </div>
+
+</div>

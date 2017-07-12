@@ -1,0 +1,41 @@
+.top-title {
+    background-color: #eef1f3;
+    height: 50px;
+    line-height: 50px;
+    margin-bottom: 5px;
+}
+
+.title-offset {
+    margin-left: 20px;
+}
+
+.analysis-item {
+    margin: 10px;
+    border: 1px solid transparent;
+}
+.analysis-item-remove {
+    float: right;
+    margin-right: 16px;
+    cursor: pointer;
+}
+
+.analysis-item-add {
+    border: 1px solid #d9dada;
+    text-align: center;
+    margin-top: 5px;
+    padding: 9px;
+    cursor: pointer;
+}
+
+.auto-over-flow {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+}
+
+.title-fresh-icon {
+    float: right;
+    line-height: 50px;
+    margin-right: 30px;
+    cursor: pointer;
+}

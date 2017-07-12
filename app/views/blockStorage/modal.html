@@ -1,0 +1,825 @@
+﻿<!-- LUN modal -->
+    <!-- add Lun Modal -->
+    <div id="addLunModal" class="modal fade" style="top: 20%; margin:0 auto;width:500px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-header" style="font-size:15px;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title modal-title-font">创建卷</h4>
+        </div>
+        <div class="modal-body" style="background-color:#fff;padding:20px 50px 35px 50px;color:#1d1007;">
+            <form role="form">
+                <div class="form-group">
+                    <label>所属存储池</label>
+                    <div class="input-append">
+                        <select class="form-control" style="border-radius:4px;width:55%;" ng-model="block.pool" 
+                        ng-options="pool.poolName for pool in block.poolList" 
+                        ng-change="selectPoolCreateVolume(block.pool)" >
+                            <option value="">-请选择存储池-</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>卷名</label>
+                    <input class="form-control" type="text" id="lunId" ng-model="block.volumeName" 
+                        placeholder="由数字或字母及下划线组成，相同存储池内名字不能重复。"/>
+                </div>
+                <div class="form-group">
+                    <label>副本数</label>
+                    <div class="input-append">
+                        <select class="form-control" style="border-radius:4px;width:28%;" ng-model="block.replicated" 
+                            ng-options="replacted for replacted in block.CreateVolumeCurrentPool.policy.replicated">
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>容量</label>
+                    <div style="margin-bottom:20px;">
+                        <input class="form-control" type="text" ng-model="block.capacity_display" style="width:55%;display:inline;text-align:right;float:left;" placeholder="请输入容量，最大支持256TB">
+                        <div class="input-append" style="display:inline;">
+                            <select class="form-control" style="border-radius:4px;width:28%;display:inline;float:left;margin-left:5px;" ng-model="block.sizeUnit">
+                                <option value="MB"> MB </option>
+                                <option value="GB"> GB </option>
+                                <option value="TB"> TB </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+            <button class="btn-sure" ng-click="block.createVolume()" ng-disabled="!systemMode.isNormal || isAdd"> 确认 </button>
+            <button class="btn-cancel" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd">关闭</button>
+        </div>
+    </div>
+    <!-- add Lun Modal end -->
+
+    <!-- update Lun Modal -->
+    <div id="updateVolumeModal" class="modal fade" style="top: 20%; margin:0 auto;width:500px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-header" style="font-size:15px;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title modal-title-font">调整卷容量</h4>
+        </div>
+        <div class="modal-body" style="background-color:#fff;padding:20px 50px 10px 50px;color:#1d1007;">
+            <label>ID</label>
+            <input class="form-control" type="text" ng-model="currentVolume.volumeName.split('.')[1]" style="width:100%;" readonly>
+            <label style="margin-top:10px;">容量</label>
+            <br>
+            <div style="margin-bottom:40px;">
+                <input class="form-control" type="text" ng-model="currentVolume.capacity_display" style="width:78%;display:inline;text-align:right;float:left;" placeholder="请输入容量，最大支持256TB">
+                <div class="input-append" style="display:inline;">
+                    <select class="form-control" style="margin-left:2%;border-radius:4px;width:20%;display:inline;float:left;" ng-model="currentVolume.sizeUnit">
+                        <option value="MB"> MB </option>
+                        <option value="GB"> GB </option>
+                        <option value="TB"> TB </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+            <button class="btn-sure" ng-click="block.updateVolume()" ng-disabled="!systemMode.isNormal || isAdd"> 确认 </button>
+            <button class="btn-cancel" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd">关闭</button>
+        </div>
+    </div>
+    <!-- update Lun Modal end -->
+
+    <!-- delete Lun Modal -->
+    <div id="deleteLunModal" class="modal fade" style="top: 20%; margin:0 auto;width:500px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-header" style="font-size:15px;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title modal-title-font">删除？</h4>
+        </div>
+        <div class="modal-body" style="background-color:#fff;padding:20px 50px 10px 50px;color:#1d1007;">
+            <div ng-show="block.isExistSnapshot">
+                该卷有快照，请先删除快照!
+            </div>
+            <div ng-show="block.modalData.type == 'blk'">
+                该卷已连接客户端，请断开后重试!
+            </div>
+            <div ng-show="!block.isExistSnapshot && block.modalData.type != 'blk'">
+                <div class="fontSize16"  style="color:#000;">
+                    存储池
+                    <text style="color:#f00;font-weight:bold;">{{block.modalData.poolName.split('@')[0]}}</text>
+                    的卷
+                    <text style="color:#f00;font-weight:bold;">{{block.modalData.volumeName.split('.')[1]}}</text>
+                    数据将被永久删除！
+                </div>
+                <div class="fontSize16"  style="color:#000;">
+                    <span>请输入大写'YES'以确定删除操作</span>
+                    <input  class="form-control sure2do" type="text" ng-model="block.isYesConfirm" placeholder="NO">
+                </div>
+                <div ng-show="block.sure2deleteLunAgain">
+                    <div class="fontSize16" style="color:#000;margin-top:15px;">
+                        <text style="color:#000;">该卷已连接客户端，请确认该卷已经不再使用</text>
+                        <span>请输入大写'YES'以确定删除操作</span>
+                        <input class="form-control sure2do" type="text" ng-model="block.isYesAgainConfirm" placeholder="NO">
+                    </div>
+                </div>
+                <div class="fontSize16"  style="color:red;">{{errMsg}}</div>
+            </div>
+        </div>
+        <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+            <button class="btn-sure" ng-hide="block.isExistSnapshot || block.modalData.type == 'blk'" ng-click="block.deleteLun()" 
+                ng-disabled="!systemMode.isNormal || isAdd"> 确认 </button>
+            <button class="btn-cancel" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd">关闭</button>
+        </div>
+    </div>
+    <!-- delete Lun Modal end -->
+
+    <!-- map volume Modal -->
+    <div id="mapOrUmapVolumeModal" class="modal fade" style="top: 20%; margin:0 auto;width:500px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-header" style="font-size:15px;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title modal-title-font" ng-show="block.currentVolume.type != 'iscsi'">映射</h4>
+            <h4 class="modal-title modal-title-font" ng-show="block.currentVolume.type == 'iscsi'">解除映射</h4>
+        </div>
+        <div class="modal-body" style="background-color:#fff;padding:20px 50px 35px 50px;color:#1d1007;">
+            <form role="form">
+                <div class="form-group" ng-show="block.currentVolume.type != 'iscsi'">
+                    <div>
+                        <label>卷名</label>
+                        <input class="form-control" type="text" ng-model="block.currentVolume.volumeName.split('.')[1]" readonly>
+                    </div>
+                    <div ng-show="block.currentVolume.type == '-'">
+                        <label>映射类型</label>
+                        <div class="input-append">
+                            <select  class="form-control" style="border-radius:4px;" ng-model="block.modalData.volumeMapType" ng-options="type for type in block.mapType">
+                                <option value="">-请选择映射类型-</option>
+                        </select>
+                        </div>
+                    </div>
+                    <div  ng-show="block.modalData.volumeMapType == 'Lun'">
+                        <label>ISCSI目标</label>
+                        <div class="input-append">
+                            <select  class="form-control" style="border-radius:4px;" ng-model="block.modalData.target" ng-options="target.name for target in block.targetList">
+                                <option value="">-请选择ISCSI目标-</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div ng-show="block.modalData.volumeMapType == 'Block' || block.currentVolume.type == 'blk'">
+                        <label>选择挂载节点</label>
+                        <div class="input-append">
+                            <select  class="form-control" style="border-radius:4px;" ng-model="block.modalData.mapNode" ng-options="node.hostid for node in block.hostInfoList">
+                                <option value="">-请选择节点-</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div ng-show="block.currentVolume.type == 'iscsi'" >
+                    <div class="fontSize16"  style="color:#000;">
+                        卷
+                        <text style="color:#f00;font-weight:bold;">{{block.currentVolume.volumeName.split('.')[1]}}</text>
+                        将解除与ISCSI目标映射！
+                    </div>
+                    <div class="fontSize16"  style="color:#000;">
+                        <span>请输入大写'YES'以确定解除操作</span>
+                        <input  class="form-control sure2do" type="text" ng-model="block.isYesConfirm" placeholder="NO">
+                    </div>
+                    <div class="fontSize16"  style="color:red;">{{snapErrMsg}}</div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+            <button class="btn-sure" ng-click="block.mapOrUnmapVolume()"> 确认 </button>
+            <button class="btn-cancel" data-dismiss="modal" aria-hidden="true">关闭</button>
+        </div>
+    </div>
+    <!-- map volume Modal end-->
+
+    <!-- map snap Modal -->
+    <div id="mapOrUmapSnapModal" class="modal fade" style="top: 20%; margin:0 auto;width:500px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-header" style="font-size:15px;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title modal-title-font">映射</h4>
+            <!-- <h4 class="modal-title modal-title-font" ng-show="block.currentSnap.type == 'iscsi'">映射</h4> -->
+        </div>
+        <div class="modal-body" style="background-color:#fff;padding:20px 50px 35px 50px;color:#1d1007;">
+            <form role="form">
+                <div class="form-group" ng-show="!block.currentSnap.hadMap">
+                    <div >
+                        <label>快照名</label>
+                        <input class="form-control" type="text" ng-model="block.currentSnap.snapName" style="width:55%;" readonly>
+                    </div> 
+                    <div >
+                        <label>ISCSI目标</label>
+                        <div class="input-append">
+                            <select  class="form-control" style="border-radius:4px;width:55%;" ng-model="block.modalData.target" ng-options="target.name for target in block.targetList">
+                                <option value="">-请选择ISCSI目标-</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div ng-show="block.currentSnap.hadMap">
+                    <div class="fontSize16"  style="color:#000;">
+                        快照
+                        <text style="color:#f00;font-weight:bold;">{{block.currentSnap.snapName}}</text>
+                        将解除与ISCSI目标映射！
+                    </div>
+                    <div class="fontSize16"  style="color:#000;">
+                        <span>请输入大写'YES'以确定解除操作</span>
+                        <input  class="form-control sure2do" type="text" ng-model="block.isYesConfirm" placeholder="NO">
+                    </div>
+                    <div class="fontSize16"  style="color:red;">{{snapErrMsg}}</div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+            <button class="btn-sure" ng-click="block.mapSnap()" ng-show="!block.currentSnap.hadMap" ng-disabled="!systemMode.isNormal || isAdd"> 确认 </button>
+            <button class="btn-sure" ng-click="block.unmapSnap()" ng-show="block.currentSnap.hadMap" ng-disabled="!systemMode.isNormal || isAdd"> 确认 </button>
+            <button class="btn-cancel" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd">关闭</button>
+        </div>
+    </div>
+    <!-- map snap Modal end-->
+<!-- LUN modal end -->
+
+<!-- iSCSI -->
+    <!-- add iSCSI Initiator -->
+    <div id="addInitiatorModal" class="modal fade" style="top: 20%; margin:0 auto;width:500px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-header" style="font-size:15px;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title modal-title-font">添加iSCSI客户端</h4>
+        </div>
+        <div class="modal-body" style="background-color:#fff;padding:20px 50px 10px 50px;color:#1d1007;">
+            <label> 添加iSCSI客户端 </label>
+            <div class="input-append">
+                <input class="form-control" type="text" ng-model="storage.modalData.initiatorISCSI" placeholder="请输入新增iscsi发起程序名"/>
+                <span> &nbsp;iscsi 启动器名称有效字符范围:[a-zA-Z0-9.-_:]，最长字符数目:223。</span>
+            </div>
+            <div class="form-group" style="margin-top: 5px">
+                <label>描述</label>
+                <textarea class="form-control" ng-model="storage.initiatorRemark" style="margin: 0px 0px 10px; width: 100%; height: 100px;"
+                ></textarea>
+            </div>
+            <label style="color:#ef595a"> {{addInitiatorErrMsg}} </label>
+        </div>
+        <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+            <button class="btn-sure" ng-click="storage.addInitiator()" ng-disabled="!systemMode.isNormal || isAdd"> 确认 </button>
+            <button class="btn-cancel" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd">关闭</button>
+        </div>
+    </div>
+    <!-- add iSCSI Initiator end -->
+<!-- iSCSI end -->
+
+<!--Target modal -->
+    <!-- add target Modal -->
+    <div id="addTargetModal" class="modal fade" style="top: 20%; margin:0 auto;width:500px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-header" style="font-size:15px;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title modal-title-font">创建ISCSI目标</h4>
+        </div>
+        <div class="modal-body" style="background-color:#fff;padding:20px 50px 35px 50px;color:#1d1007;">
+            <form role="form">
+                <div class="form-group">
+                    <label>ISCSI目标名</label>
+                    <input class="form-control" type="text" id="lunId" ng-model="block.modalData.targetName" 
+                        placeholder="由数字或字母及符号组成，且名字不能重复。"/>
+                </div>
+                <div class="form-group">
+                    <label>所属节点</label>
+                    <div class="input-append">
+                        <select class="form-control" style="border-radius:4px;width:55%;" ng-model="block.modalData.hostId" ng-options="host.hostid for host in block.hostInfoList">
+                            <option value="">-请选择绑定节点-</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>模式</label>
+                    <div class="input-append">
+                        <select class="form-control" style="border-radius:4px;width:55%;" ng-model="block.modalData.pattern" ng-options="pattern for pattern in block.targetPattern">
+                            <option value="">-请选择模式-</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="fontSize16"  style="color:red;">{{bottomErrMsg}}</div>
+            </form>
+        </div>
+        <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+            <button class="btn-sure" ng-click="block.createTarget()" ng-disabled="!systemMode.isNormal || isAdd"> 确认 </button>
+            <button class="btn-cancel" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd">关闭</button>
+        </div>
+    </div>
+    <!-- add target Modal end -->
+
+    <!-- del target Modal -->
+    <div id="deleteTargetModal" class="modal fade" style="top: 20%; margin:0 auto;width:500px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-header" style="font-size:15px;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title modal-title-font">删除？</h4>
+        </div>
+        <div class="modal-body" style="background-color:#fff;padding:20px 50px 10px 50px;color:#1d1007;">
+           <!--  <div ng-show="block.isActiveVolumeAcl">
+                该卷的ISCSI目标存在已连接客户端，请断开后重试!
+            </div> -->
+            <div >
+                <div ng-show="block.modalData.status != 'active'">
+                    <div class="fontSize16"   style="color:#000;">
+                        ISCSI目标
+                        <text style="color:#f00;font-weight:bold;">{{currentTarget.name}}</text>
+                        将被永久删除！
+                    </div>
+                    <div class="fontSize16"  style="color:#000;">
+                        <span>请输入大写'YES'以确定删除操作</span>
+                        <input  class="form-control sure2do" type="text" ng-model="block.isYesConfirm" placeholder="NO">
+                    </div>
+                </div>
+                <div ng-show="block.modalData.status == 'active'">
+                    <div class="fontSize16" style="color:#000;margin-top:15px;">
+                        <text style="color:#000;">该ISCSI目标已连接客户端，请先断开连接!</text>
+                    </div>
+                </div>
+                <div class="fontSize16"  style="color:red;">{{bottomErrMsg}}</div>
+            </div>
+        </div>
+        <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+            <button class="btn-sure" ng-hide="block.modalData.status == 'active'" ng-click="block.deleteTarget()" 
+                ng-disabled="!systemMode.isNormal || isAdd"> 确认 </button>
+            <button class="btn-cancel" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd">关闭</button>
+        </div>
+    </div>
+    <!-- del target Modal end -->
+
+    <!-- volumes map to target -->
+    <div id="volumesMapTargetModal" class="modal fade" style="top: 28%; margin-top: -150px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="widht: 750px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title modal-title-font">卷与ISCSI目标端关联</h4>
+                </div>
+                <div class="modal-body">
+                    <form role="form">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>存储池</label>
+                                    <select class="form-control" ng-model="block.modalData.selectedPool" ng-options="pool.poolName.split('@')[0] for pool in block.poolList" ng-change="getPoolVolumes()">
+                                        <option value="">-选择存储池-</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label >ISCSI目标</label>
+                                    <input type="text" class="form-control" ng-model="block.currentTarget.name" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ms-container" id="msContainer">
+                            <div class="ms-selectable">
+                                可选卷
+                                <ul class="ms-list">
+                                    <li class="ms-elem-selectable half" ng-repeat="volumeName in block.optionalVolume.sort()" ng-click="block.showFeatureSelected('optional', volumeName)" ms-value="{{$index}}">
+                                        {{volumeName.split('.')[1]}}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="ms-selection">
+                                已选卷
+                                <ul class="ms-list">
+                                    <li class="ms-elem-selectable half" ng-repeat="volumeName in block.hasSelectVolume.sort()" ng-click="block.showFeatureSelected('selected', volumeName)" ms-value="{{$index}}">
+                                        {{volumeName.split('.')[1]}}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+                    <button class="btn-sure" ng-click="block.volumesMapTarget()" 
+                        ng-disabled="!systemMode.isNormal || isAdd"> 确认 </button>
+                    <button class="btn-cancel" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- volumes map to target  end -->
+<!---Target modal end -->
+
+<!-- Block modal -->
+    <!-- add Block Modal -->
+    <div id="addBlockModal" class="modal fade" style="top: 20%; margin:0 auto;width:500px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-header" style="font-size:15px;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title modal-title-font">创建块设备</h4>
+        </div>
+        <div class="modal-body" style="background-color:#fff;padding:20px 50px 10px 50px;color:#1d1007;">
+            <label>所属存储池</label>
+            <div class="input-append">
+                <select class="form-control" style="border-radius:4px;width:55%;" ng-model="selectedBlock.poolName" ng-options="pool.poolName as pool.poolName for pool in apoolList">
+                    <option value="">-请选择存储池-</option>
+                </select>
+            </div>
+            <label>块设备名称</label>
+            <input class="form-control" type="text" ng-model="selectedBlock.lunName" placeholder="不可包含@和#字符，并且不可以'-'字符开始。" style="width:100%;">
+            <label>容量</label>
+            <br>
+            <div style="margin-bottom:40px;">
+                <input class="form-control" type="text" ng-model="selectedBlock.capacity_display" style="width:50%;display:inline;text-align:right;float:left;" placeholder="请输入容量，最大支持256TB">
+                <div class="input-append" style="display:inline;">
+                    <select class="form-control" style="border-radius:4px;width:25%;display:inline;float:left;margin-left:5px;" ng-model="selectedBlock.sizeUnit">
+                        <option value="MB"> MB </option>
+                        <option value="GB"> GB </option>
+                        <option value="TB"> TB </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+            <button class="btn-sure" ng-click="operateBlock()" ng-disabled="!systemMode.isNormal || isAdd"> 确认 </button>
+            <button class="btn-cancel" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd">关闭</button>
+        </div>
+    </div>
+    <!-- add Block Modal end -->
+
+    <!-- update Block Modal -->
+    <div id="updateBlockModal" class="modal fade" style="top: 20%; margin:0 auto;width:500px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-header" style="font-size:15px;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title modal-title-font">调整块设备容量</h4>
+        </div>
+        <div class="modal-body" style="background-color:#fff;padding:20px 50px 10px 50px;color:#1d1007;">
+            <label>块设备名</label>
+            <input class="form-control" type="text" ng-model="selectedBlock.lunName" style="width:100%;" readonly>
+            <label>容量</label>
+            <div style="margin-bottom:40px;">
+                <input class="form-control" type="text" ng-model="selectedBlock.capacity_display" style="width:78%;display:inline;text-align:right;float:left;" placeholder="请输入容量，最大支持256TB">
+                <div class="input-append" style="display:inline;">
+                    <select class="form-control" style="border-radius:4px;width:20%;display:inline;float:left;margin-left:2%;" ng-model="selectedBlock.sizeUnit">
+                        <option value="MB"> MB </option>
+                        <option value="GB"> GB </option>
+                        <option value="TB"> TB </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+            <button class="btn-sure" ng-click="operateBlock()" ng-disabled="!systemMode.isNormal || isAdd"> 确认 </button>
+            <button class="btn-cancel" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd">关闭</button>
+        </div>
+    </div>
+    <!-- update Block Modal end -->
+
+    <!-- delete Block Modal -->
+    <div id="deleteBlockModal" class="modal fade" style="top: 20%; margin:0 auto;width:500px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-header" style="font-size:15px;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title modal-title-font">删除？</h4>
+        </div>
+        <div class="modal-body" style="background-color:#fff;padding:20px 50px 10px 50px;color:#1d1007;">
+            <div ng-show="!blockRollbacking && snapOverLun">
+                <span>该lun/块设备有快照，请先删除快照</span>
+            </div>
+            <div ng-show="!blockRollbacking && !snapOverLun">
+                <div class="fontSize16"  style="color:#000;">存储池<text style="color:#f00;font-weight:bold;">{{block4Delete.poolName}}</text>的块设备
+                    <text style="color:#f00;font-weight:bold;">{{block4Delete.lunName}}</text>数据将被永久删除！
+                </div>
+                <div class="fontSize16"  style="color:#000;">
+                    <span>请输入大写'YES'以确定删除操作</span>
+                    <input type="text" class="form-control sure2do" ng-model="selectedBlock.sure2deleteBlock" placeholder="NO">
+                </div>
+                <div ng-show="sure2deleteBlockAgain">
+                    <div class="fontSize16" style="color:#000;">
+                        <text style="color:#000;">该存储池已连接客户端，请确认该块设备已经不再使用</text>
+                        <span>请输入大写'YES'以确定删除操作</span>
+                        <input type="text" class="form-control sure2do" ng-model="selectedBlock.sure2deleteBlockAgain" placeholder="NO">
+                    </div>
+                </div>
+            </div>
+            <div class="fontSize16"  style="color:red;">{{errMsg}}</div>
+        </div>
+        <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+            <button class="btn-sure" ng-hide="!blockRollbacking && snapOverLun" ng-click="goDeleteBlock()" 
+                ng-disabled="!systemMode.isNormal || isAdd"> 确认 </button>
+            <button class="btn-cancel" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd">关闭</button>
+        </div>
+    </div>
+    <!-- delete Block Modal end -->
+<!-- Block modal end -->
+
+<!-- snapshot Modal -->
+    <div id="createSnapshotModal" class="modal fade" style="top: 20%; margin:0 auto;width:500px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content" style="width:500px;">
+                <div class="modal-header" style="font-size:15px;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title modal-title-font">创建快照</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="padding: 0px 15px;">
+                        <form role="form" style="margin-bottom: 5px">
+                            <label style="color: red">创建快照时只对已写入LUN的数据保存快照</label>
+                            <label style="color: red">强烈建议此时停止对LUN的写IO以保证一致性</label>
+                            <br>
+                            <label>名称</label>
+                            <input class="form-control" type="text" ng-model="block.saveSnapshot.name" style="width:100%;" 
+                                placeholder="请输入快照名称，由数字或字母组成，长度为1至8。"/>
+                            <br>
+                            <label>描述</label>
+                            <textarea class="form-control" ng-model="block.saveSnapshot.remark" style="margin: 0px 0px 10px; width: 100%; height: 100px;"
+                                placeholder="请输入快照描述，字数在500以内。"></textarea>
+                        </form>
+                        <div class="fontSize16"  style="color:red;">{{snapErrMsg}}</div>
+                    </div>
+                    <!-- 加载中 -->
+                    <div class="spin"></div>
+                </div>
+                <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+                    <button class="btn-sure" ng-click="block.createSnapshot()" ng-disabled="!systemMode.isNormal || isAdd">确认</button>
+                    <button class="btn-cancel" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteSnapshotModal" class="modal fade" style="top: 20%; margin:0 auto;width:500px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content" style="width:500px;">
+                <div class="modal-header" style="font-size:15px;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title modal-title-font">删除快照</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="padding: 0px 15px;">
+                        <div class="fontSize16" style="color:#000;">存储池<text style="color:#f00;font-weight:bold;">{{block.modalData.poolName}}</text>
+                        <text >卷</text><text style="color:#f00;font-weight:bold;">{{currentVolume.volumeName.split('.')[1]}}</text>
+                        的快照<text style="color:#f00;font-weight:bold;">{{block.modalData.snapName}}</text>
+                        将被永久删除！
+                        </div>
+                        <div class="fontSize16" style="color:#000;">
+                            <span>请输入大写'YES'以确定删除操作</span>
+                            <input class="form-control sure2do" type="text" ng-model="block.isYesConfirm" placeholder="NO">
+                        </div>
+                        <div class="fontSize16"  style="color:red;">{{snapErrMsg}}</div>
+                    </div>
+                    <!-- 加载中 -->
+                    <div class="spin"></div>
+                </div>
+                <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+                    <button class="btn-sure" ng-click="block.deleteSnapshot()" ng-disabled="!systemMode.isNormal || isAdd">确认</button>
+                    <button class="btn-cancel" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="rollbackSnapshotModal" class="modal fade" style="top: 20%; margin:0 auto;width:500px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content" style="width:500px;">
+                <div class="modal-header" style="font-size:15px;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title modal-title-font">快照回滚</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="padding: 0px 15px;">
+                        <div class="fontSize16" style="color:#000;">存储池<text style="color:#f00;font-weight:bold;">{{block.modalData.poolName}}</text>
+                            <text>卷</text><text style="color:#f00;font-weight:bold;">{{currentVolume.volumeName.split('.')[1]}}</text>
+                            即将回滚到快照<text style="color:#f00;font-weight:bold;">{{block.modalData.snapName}}</text>
+                        </div>
+                        <div class="fontSize16" style="color:#000;">此操作不可逆 </div>
+                        <div class="fontSize16" style="color:#000;">
+                            最晚创建的快照的时间点和回滚操作开始的时间点之间，写入
+                            <text>LUN</text>
+                            的数据将被清除且不可恢复！
+                        </div>
+                        <div ng-show="currentVolume.type == 'blk'" class="fontSize16" style="color:#000;">
+                            请注意需要先断开块设备连接后再做回滚。
+                        </div>
+                        <div class="fontSize16" style="color:#000;">
+                            <span>请输入大写'YES'以确定回滚操作</span>
+                            <input class="form-control sure2do" type="text" ng-model="block.isYesConfirm" placeholder="NO">
+                            <div class="fontSize16"  style="color:red;">{{snapErrMsg}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+                    <button class="btn-sure" ng-click="block.rollbackSnapshot()" ng-disabled="!systemMode.isNormal || isAdd">确认</button>
+                    <button class="btn-cancel" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="updateDescribeModal" class="modal fade" style="top: 20%; margin:0 auto;width:500px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content" style="width:500px;">
+                <div class="modal-header" style="font-size:15px;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title modal-title-font">修改快照描述</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="padding: 0px 15px;">
+                        <label>名称:&emsp;</label>
+                        <input class="form-control" type="text" ng-model="block.modalData.snapName" readOnly>
+                        <br>
+                        <label>描述</label>
+                        <textarea class="form-control" ng-model="block.modalData.remark" style="margin: 0px 0px 10px; width: 100%; height: 100px;"></textarea>
+                    </div>
+                    <!-- 加载中 -->
+                    <div class="spin"></div>
+                </div>
+                <div class="modal-footer" style="background:#EDF1F4;border-top:0px;">
+                    <button class="btn-sure" ng-click="block.updateDescribe()" ng-disabled="!systemMode.isNormal || isAdd">确认</button>
+                    <button class="btn-cancel" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cloneVolumeModal" class="modal fade" style="margin:0 auto;width:500px;top: 20%;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header" style="font-size:15px;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancelSnap()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title modal-title-font">克隆卷</h4>
+        </div>
+        <div class="modal-body" style="background-color:#fff;padding:20px 50px 10px 50px;color:#97acc1;">
+            <form style="margin-bottom: 5px">
+                <!-- 克隆卷 -->
+                <div>
+                    <div>
+                        <label> 选择新卷所属的存储池 </label>
+                        <select class="form-control" style="border-radius:4px;width:100%" ng-model="block.clonelun.poolName" ng-options="pool.poolName as pool.poolName for pool in block.poolList">
+                            <option value="">-请选择存储池-</option>
+                        </select>
+                        </br>
+                        <div>
+                            <label> 输入新卷名 </label>
+                            <input class="form-control" type="text" style="width:100%;" ng-model="block.clonelun.volumeName" placeholder="请输入字母数字或下划线，相同存储池内卷名不能重复。">
+                        </div>
+                    </div>
+                </div>
+                <div class="fontSize16"  style="color:red;">{{snapErrMsg}}</div>
+            </form>
+            <!-- 加载中 -->
+            <div class="spin"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-sure" ng-click="block.cloneVolume()" ng-disabled="!systemMode.isNormal || isAdd">确认</button>
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd" ng-click="block.cancelSnap()">取消</button>
+        </div>
+    </div>
+
+
+
+
+
+
+    <div id="snapModal" class="modal fade" style="margin:0 auto;width:500px;top: 20%;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header" style="font-size:15px;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancelSnap()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title modal-title-font">{{snapMessage}}</h4>
+        </div>
+        <div class="modal-body" style="background-color:#fff;padding:20px 50px 10px 50px;color:#97acc1;">
+            <form style="margin-bottom: 5px">
+                <div ng-show="(snapCommitType=='rollback' || snapCommitType=='add' || snapCommitType=='delete') && snapRollbacking">
+                    <span style="color: #000;"> 正在进行快照回滚，请等待回滚完成后再操作</span>
+                </div>
+                <div ng-show="!snapRollbacking && snapModelAdd">
+                    <label style="color: red">创建快照时只对已写入LUN的数据保存快照</label>
+                    <label style="color: red">强烈建议此时停止对LUN的写IO以保证一致性</label>
+                    <br>
+                    <label>名称</label>
+                    <input class="form-control" type="text" style="width:100%;" placeholder="请输入快照名称，由数字或字母组成，长度为1至8。" ng-model="snapModel.snapName">
+                    <br>
+                    <label>描述</label>
+                    <textarea class="form-control" ng-model="snapModel.remark" placeholder="请输入快照描述，字数在500以内。" style="margin: 0px 0px 10px; width: 100%; height: 100px;"></textarea>
+                </div>
+                <!-- 修改部分 -->
+                <div ng-show="snapModelUpdate">
+                    <label>名称:&emsp;</label>
+                    <input class="form-control" type="text" ng-model="snapModel.snapName" readOnly>
+                    <br>
+                    <label>描述</label>
+                    <textarea class="form-control" ng-model="snapModel.remarkInput" style="margin: 0px 0px 10px; width: 100%; height: 100px;"></textarea>
+                </div>
+                <!-- 删除提示部分 -->
+                <div ng-show="!snapRollbacking && snapModelDelete" style="color:#000;">
+                    <div class="fontSize16" style="color:#000;">存储池<text style="color:#f00;font-weight:bold;">{{snapLun.poolName}}</text>
+                    <text ng-show="snapLun.type == 'iscsi'">LUN</text><text ng-show="snapLun.type == 'blk'">块设备</text><text style="color:#f00;font-weight:bold;">{{snapLun.lunName}}</text>
+                    的快照<text style="color:#f00;font-weight:bold;">{{snapModel.snapName}}</text>
+                    将被永久删除！
+                    </div>
+                    <div class="fontSize16" style="color:#000;">
+                        <span>请输入大写'YES'以确定删除操作</span>
+                        <input class="form-control sure2do" type="text" ng-model="snapModel.sure2deleteSnap" placeholder="NO">
+                    </div>
+                </div>
+                <div ng-show="!snapRollbacking && snapModelRollback" style="color:#000;">
+                    <div class="fontSize16" style="color:#000;">存储池<text style="color:#f00;font-weight:bold;">{{snapLun.poolName}}</text>
+                        <text ng-show="snapLun.type == 'iscsi'">LUN</text><text ng-show="snapLun.type == 'blk'">块设备</text><text style="color:#f00;font-weight:bold;">{{snapLun.lunName}}</text>
+                        即将回滚到快照<text style="color:#f00;font-weight:bold;">{{snapModel.snapName}}</text>
+                    </div>
+                    <div class="fontSize16" style="color:#000;">此操作不可逆 </div>
+                    <div class="fontSize16" style="color:#000;">
+                        最晚创建的快照的时间点和回滚操作开始的时间点之间，写入
+                        <text ng-show="snapLun.type == 'iscsi'">LUN</text>
+                        <text ng-show="snapLun.type == 'blk'">块设备</text>
+                        的数据将被清除且不可恢复！
+                    </div>
+                    <div ng-show="snapLun.type == 'blk'" class="fontSize16" style="color:#000;">
+                        请注意需要先断开块设备连接后再做回滚。
+                    </div>
+                    <div class="fontSize16" style="color:#000;">
+                        <span>请输入大写'YES'以确定回滚操作</span>
+                        <input class="form-control sure2do" type="text" ng-model="snapModel.sure2deleteSnap" placeholder="NO">
+                    </div>
+                </div>
+
+                <!-- 确认有initiator连接情况下继续打快照和快照回滚 -->
+                <div ng-show="sure2Snap" style="color:#000;">
+                    <div class="fontSize16" style="color:#F00;margin:10px 0 10px 0">POOL:{{snapLun.poolName}}该存储池已连接客户端，建议断开连接后操作，继续操作存在数据丢失风险！</div>
+                    <div class="fontSize16" style="color:#000;">
+                        <span>如果要强行继续，请输入大写'YES'以确定继续操作</span>
+                        <input class="form-control sure2do" type="text" ng-model="snapLun.sure2Snap" placeholder="NO">
+                    </div>
+                </div>
+                <!-- 克隆卷 -->
+                <div ng-show="cloneVolume">
+                    <div>
+                        <label> 选择新卷所属的存储池 </label>
+                        <select class="form-control" style="border-radius:4px;width:100%" ng-model="$parent.clonelun.poolName" ng-options="pool.poolName as pool.poolName for pool in poolList">
+                            <option value="">-请选择存储池-</option>
+                        </select>
+                        </br>
+                        <div ng-show="currentSnapshotType=='lun'">
+                            <label> 输入新卷LUN ID </label>
+                            <input class="form-control" type="text" style="width:100%;" ng-model="$parent.clonelun.lunId" placeholder="请输入1至254数字作为LUN ID，相同存储池内ID不能重复。">
+                        </div>
+                        <div ng-show="currentSnapshotType=='blk'">
+                            <label>块设备名称</label>
+                            <input class="form-control" type="text" ng-model="$parent.clonelun.blockName" placeholder="不可包含@和#字符，并且不可以'-'字符开始。" style="width:100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fontSize16"  style="color:red;">{{snapErrMsg}}</div>
+            </form>
+            <!-- 加载中 -->
+            <div class="spin"></div>
+        </div>
+        <div ng-show="!snapRollbacking" class="modal-footer">
+            <button class="btn-sure" ng-click="commitSnap()" ng-disabled="!systemMode.isNormal || isAdd">确认</button>
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd" ng-click="cancelSnap()">取消</button>
+        </div>
+        <div ng-show="snapRollbacking" class="modal-footer">
+            <button ng-show="snapCommitType=='update' || snapCommitType=='cloneVolume'" class="btn-sure" ng-click="commitSnap()" ng-disabled="!systemMode.isNormal || isAdd">确认</button>
+            <button class="btn" data-dismiss="modal" aria-hidden="true" ng-disabled="isAdd" ng-click="cancelSnap()">关闭</button>
+        </div>
+    </div>
+<!-- snapshot Modal end -->
+
+<script type="text/javascript">
+    var selectors = [
+            '#createPoolModal input,select',
+            '#renamePoolModal input,select',
+            '#addInitiatorModal input,select',
+            '#setChapModal input,select',
+            '#deletePoolModal input,select',
+            '#delPoolInitiatorBox input,select',
+            '#sure2AddAcl input,select',
+
+            '#addLunModal input,select',
+            '#deleteLunModal input,select',
+
+            '#addBlockModal input,select',
+            '#updateBlockModal input,select',
+            '#deleteBlockModal input,select',
+            '#cloneVolumeModal input,select',
+
+            '#snapModal input,select',
+            '#updateVolumeModal input, select',
+            '#addTargetModal input, select',
+            '#setChapModal input, select'
+        ]
+    for (var i = 0; i < selectors.length ; i++) {
+        $(selectors[i]).each(function () {
+            var _this = $(this);
+            _this.popover({
+                trigger: "manual",
+                placement: "top",
+                html: true,
+                content: function () {
+                    if (_this.data("tipMsg")) {
+                        return "<div style='color:#000;'>" + _this.data("tipMsg") + "</div>";
+                    }
+                    return "";
+                }
+            });
+        });
+    }
+</script>

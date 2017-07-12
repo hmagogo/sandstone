@@ -1,0 +1,1221 @@
+<div class="configure-background">
+    <div class="configure-title">
+        <span class="login-font-1"></span>
+    </div>
+    <div class="configure-container">
+        <div class="configure-modal" id="configModal">
+            <div class="modal-header">
+                <h4 class="modal-title title-font">系统初始化设置</h4>
+            </div>
+            <div class="configure-modal-body">
+                <div class="modal-body-padding">
+                    <div>
+                        <div>
+                            <sapn class="config-font">扫描节点</sapn>
+                            <span class="long-line"></span>
+                            <span class="descend"></span>
+                        </div>
+                        <div class="row configure-pl pr">
+                            <div class="col-sm-5">
+                                <h4 class="color-616161">添加IP进行扫描配置</h4>
+                                <p class="color-616161">请输入IP段</p>
+                                <div class="row m-b-10">
+                                    <div class="col-sm-5">
+                                        <input class="form-control" type="text" placeholder="开始地址" ng-model="startIp" ng-pattern="IP_REGEXP"/>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <input class="form-control" type="text" placeholder="结束地址" ng-model="endIp" ng-pattern="IP_REGEXP"/>
+                                    </div>
+                                    <div class="col-sm-2 p-lr-0">
+                                        <i class="ipAdd" ng-click="addIpRange()"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 分割线 -->
+                            <div class="vl"></div>
+
+                            <div class="col-sm-6" style="height: 160px; overflow-y: auto;">
+                                <div class="text-block" ng-repeat="ip in saveScanningIp">
+                                    {{ip}}<span class="remove15" ng-click="ipRemove(ip)"></span>
+                                </div>
+                            </div>
+
+                            <div style="position: absolute; bottom:0; right: 10px;">
+                                <button class="btn btn-success" type="button" ng-disabled="isScanIp" ng-click="scanningIp()" data-loading-text="Loading...">
+                                    <span ng-show="!showLoading">开始扫描</span>
+                                    <span ng-show="showLoading">
+                                        <i class="config-load"></i>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <div ng-show="isShowNodeNum" style="float: right;margin-right: 15%;">
+                            已扫描{{saveScanningIp.length}}个节点，发现{{nodeObj.physical_pool.install_info.servers.length}}个节点
+                        </div>
+                        <div id="errorMessageBox" for="inputEmail" class="configure-pl configure-error" ng-bind="errorMessageBox"></div>
+                    </div>
+                    <div style="clear: both;"></div>
+                    <div ng-show="!isScanning">
+                        <div>
+                            <sapn class="config-font">集群设置</sapn>
+                            <span class="long-line"></span>
+                            <span class="descend"></span>
+                        </div>
+                        <div style="padding-left: 85px;">
+                            <form class="form-inline">
+                                <div class="form-group p-rb-15" ng-show="isConfigNetworkIpaddr(networks_config, 'om_bussiness')">
+                                    <span class="color-616161" for="omBussinessIpaddr">管理系统IP地址</span>
+                                    <input class="form-control" type="text" id="omBussinessIpaddr" ng-model="nodeObj.cluster.omBussinessIpaddr"/>
+                                </div>
+                                <div class="form-group p-rb-15" ng-show="isConfigNetworkNics(networks_config, 'om_bussiness')">
+                                    <span class="color-616161" for="omBussinessNetmask">管理系统子网掩码</span>
+                                    <input class="form-control" type="text" id="omBussinessNetmask" ng-model="nodeObj.cluster.omBussinessNetmask"/>
+                                </div>
+                                <div class="form-group p-rb-15" ng-show="isConfigNetworkGateway(networks_config, 'om_bussiness')">
+                                    <span class="color-616161" for="omBussinessGateway">管理系统网关IP地址</span>
+                                    <input class="form-control" type="text" id="omBussinessGateway" ng-model="nodeObj.cluster.omBussinessGateway"/>
+                                </div>
+                                <div class="form-group p-rb-15" ng-show="isConfigNetworkIpaddr(networks_config, 'om_public')">
+                                    <span class="color-616161" for="omPublicIpaddr">管理系统内部IP地址</span>
+                                    <input class="form-control" type="text" id="omPublicIpaddr" ng-model="nodeObj.cluster.omPublicIpaddr"/>
+                                </div>
+                                <div class="form-group p-rb-15">
+                                    <span class="color-616161" for="omPublicIpaddr">安全级别</span>
+                                    <select class="form-control" ng-model="securityLevel" ng-options="sl for sl in securityLevelOptions">
+                                    </select>
+                                </div>
+                                <button class="btn btn-success m-b-15" ng-click="showModal('advancedOption')" href="#modalDialogView" role="button" data-toggle="modal">
+                                    &nbsp;高级选项&nbsp;
+                                </button>
+                                <button class="btn btn-success m-b-15" ng-click="showTimeManagementBox()" role="button" data-toggle="modal">
+                                    &nbsp;时间管理&nbsp;
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div ng-show="!isScanning">
+                        <div>
+                            <sapn class="config-font">节点设置</sapn>
+                            <span class="long-line"></span>
+                            <span class="descend"></span>
+                        </div>
+                        <div style="height:40px" ng-show = "configMessage">
+                            <div id="configMessage" ng-bind="configMessage" style="color:red; float:right;"></div>
+                        </div>
+                        <div style="padding-left: 85px; width: 1180px; height: 400px;">
+                            <div class="table-wrapper default" style="width: 100%; height: 100%">
+                                <div class="fixed-column" style="border-left: 1px solid #ddd; border-top: 1px solid #ddd;">
+                                    <div class="thead">
+                                        <table class="fht-table fancyTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="t-grid t-white b c00">
+                                                        <input type="checkbox" ng-checked="allIsChecked" ng-click="checkAll()" ng-disabled="isComplete">
+                                                        <div class="moz-height" style="width: 30px;"></div>
+                                                    </th>
+                                                    <th class="t-grid t-white b c00">进度<div style="width: 50px;"></div></th>
+                                                    <th class="t-grid t-white b c00">节点名称<div style="width: 100px;"></div></th>
+                                                    <th class="t-grid t-white b c00">当前IP地址<div style="width: 100px;"></div></th>
+                                                    <th class="t-grid t-white b c00">子网掩码<div style="width: 100px;"></div></th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div class="tbody" style="height: 323px;">
+                                        <table class="fht-table fancyTable">
+                                            <tbody>
+                                                <tr class="bt" ng-repeat="node in nodeObj.physical_pool.install_info.servers">
+                                                    <td class="t-grid t-white">
+                                                        <input type="checkbox" ng-checked="node.$checked" ng-click="oneCheck(node)" ng-disabled="{{node.progress != -1}}">
+                                                        <div style="width: 30px; height: 6px;"></div>
+                                                    </td>
+                                                    <td class="t-grid t-white">
+                                                        <span>{{ node.progress < 0 ? 0 : node.progress }}%</span>
+                                                        <span style="float:right" ng-show="(showInstallProccessing) || (node.selected == 1 && node.progress != -1 && node.progress != 100)">&nbsp;<img src="images/configure/loading.gif"></span>
+                                                        <div style="width: 50px;"></div>
+                                                    </td>
+                                                    <td class="t-grid t-white">{{node.hostid}}<div style="width: 100px;  height: 6px;"></div></td>
+                                                    <td class="t-grid t-white">{{node.originalIp.ipaddr}}<div style="width: 100px; height: 6px;"></div></td>
+                                                    <td class="t-grid t-white">{{node.originalIp.netmask}}<div style="width: 100px; height: 6px;"></div></td>
+                                                </tr>
+                                                <tr style="height:160px; background-color: white;">
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="tfoot"></div>
+                                </div>
+                                <div class="fixed-body" style="width: 1090px; border: 1px solid #ddd;">
+                                    <div class="thead">
+                                        <table class="fht-table fancyTable" >
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        <input type="checkbox" ng-checked="allIsChecked" ng-click="checkAll()" ng-disabled="isComplete">
+                                                        <div style="width: 30px;"></div>
+                                                    </th>
+                                                    <th class="b c00">进度<div style="width: 50px;"></div></th>
+                                                    <th class="b c00">节点名称<div style="width: 100px;"></div></th>
+                                                    <th class="b c00">当前IP地址<div style="width: 100px;"></div></th>
+                                                    <th class="b c00">子网掩码<div style="width: 100px;"></div></th>
+
+                                                    <!--om_bussiness-->
+                                                    <th class="b c00" ng-show="isConfigNetworkNics(networks_config, 'om_bussiness')">
+                                                        管理系统网卡<div style="width: 200px;"></div>
+                                                    </th>
+                                                    <!--bussiness-->
+                                                    <th class="b c00" ng-show="isConfigNetworkIpaddr(networks_config, 'bussiness')">
+                                                        iSCSI服务IP地址<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkIpaddr(networks_config, 'bussiness')">
+                                                        子网掩码<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkGateway(networks_config, 'bussiness')">
+                                                        默认网关<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkNics(networks_config, 'bussiness')">
+                                                        网卡<div style="width: 210px;"></div>
+                                                    </th>
+
+                                                    <!--public-->
+                                                    <th class="b c00" ng-show="isConfigNetworkIpaddr(networks_config, 'public')">
+                                                        存储服务IP地址<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkIpaddr(networks_config, 'public')">
+                                                        子网掩码<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkGateway(networks_config, 'public')">
+                                                        默认网关<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkNics(networks_config, 'public')">
+                                                        网卡<div style="width: 210px;"></div>
+                                                    </th>
+
+                                                    <!--cluster-->
+                                                    <th class="b c00" ng-show="isConfigNetworkIpaddr(networks_config, 'cluster')">
+                                                        内部网络IP地址<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkIpaddr(networks_config, 'cluster')">
+                                                        子网掩码<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkNics(networks_config, 'cluster')">
+                                                        网卡<div style="width: 200px;"></div>
+                                                    </th>
+                                                    <th class="b c00">
+                                                        <div style="width: 250px;">
+                                                            <span style="width: 150px; display: inline-block;">数据盘</span>
+                                                            <span style="width: 95px; display: inline-block; text-align: left;">使用方式</span>
+                                                        </div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="!isReadWriteCacheMix">
+                                                        写缓存盘<div style="width: 150px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="!isReadWriteCacheMix">
+                                                        读缓存盘<div style="width: 150px;"></div>
+                                                    </th>
+                                                    <th class="b c00">
+                                                        机柜 <div style="width: 150px;"></div>
+                                                    </th>
+                                                    <th class="b c00">
+                                                        柜内编号 <div style="width: 90px;"></div>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div class="tbody" style="height: 340px" ng-fixed-col>
+                                        <table class="fht-table fancyTable" style="margin-top: -2.7rem">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        <input type="checkbox" ng-checked="allIsChecked" ng-click="checkAll()" ng-disabled="isComplete">
+                                                        <div style="width: 30px;"></div>
+                                                    </th>
+                                                    <th class="b c00">进度<div style="width: 50px;"></div></th>
+                                                    <th class="b c00">节点名称<div style="width: 100px;"></div></th>
+                                                    <th class="b c00">当前IP地址<div style="width: 100px;"></div></th>
+                                                    <th class="b c00">子网掩码<div style="width: 100px;"></div></th>
+
+                                                    <th class="b c00" ng-show="isConfigNetworkNics(networks_config, 'om_bussiness')">
+                                                        管理系统网卡<div style="width: 200px;"></div>
+                                                    </th>
+                                                    <!--bussiness-->
+                                                    <th class="b c00" ng-show="isConfigNetworkIpaddr(networks_config, 'bussiness')">
+                                                        iSCSI服务IP地址<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkIpaddr(networks_config, 'bussiness')">
+                                                        子网掩码<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkGateway(networks_config, 'bussiness')">
+                                                        默认网关<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkNics(networks_config, 'bussiness')">
+                                                        存储服务网卡<div style="width: 210px;"></div>
+                                                    </th>
+
+                                                    <!--public-->
+                                                    <th class="b c00" ng-show="isConfigNetworkIpaddr(networks_config, 'public')">
+                                                        存储服务IP地址<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkIpaddr(networks_config, 'public')">
+                                                        子网掩码<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkGateway(networks_config, 'public')">
+                                                        默认网关<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkNics(networks_config, 'public')">
+                                                        存储服务网卡<div style="width: 210px;"></div>
+                                                    </th>
+
+                                                    <!--cluster-->
+                                                    <th class="b c00" ng-show="isConfigNetworkIpaddr(networks_config, 'cluster')">
+                                                        内部网络IP地址<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkIpaddr(networks_config, 'cluster')">
+                                                        子网掩码<div style="width: 130px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="isConfigNetworkNics(networks_config, 'cluster')">
+                                                        网卡<div style="width: 200px;"></div>
+                                                    </th>
+                                                    <th class="b c00">
+                                                        <div style="width: 250px;">
+                                                            <span style="width: 150px; display: inline-block;">数据盘</span>
+                                                            <span style="width: 95px; display: inline-block; text-align: left;">使用方式</span>
+                                                        </div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="!isReadWriteCacheMix">
+                                                        写缓存盘<div style="width: 150px;"></div>
+                                                    </th>
+                                                    <th class="b c00" ng-show="!isReadWriteCacheMix">
+                                                        读缓存盘<div style="width: 150px;"></div>
+                                                    </th>
+                                                    <th class="b c00">
+                                                        机柜 <div style="width: 150px;"></div>
+                                                    </th>
+                                                    <th class="b c00">
+                                                        柜内编号 <div style="width: 90px;"></div>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="bt" ng-repeat="node in nodeObj.physical_pool.install_info.servers" ng-init="regDropdown()">
+                                                    <td>
+                                                        <input type="checkbox" ng-checked="node.$checked" ng-click="oneCheck(node)" ng-disabled="{{node.progress != -1}}">
+                                                        <div style="width: 30px; height: 6px;"></div>
+                                                    </td>
+                                                    <td>
+                                                        <span>{{ node.progress < 0 ? 0 : node.progress }}%</span>
+                                                        <span style="float:right" ng-show="(showInstallProccessing) || (node.selected == 1 && node.progress != -1 && node.progress != 100)">&nbsp;<img src="images/configure/loading.gif"></span>
+                                                        <div style="width: 50px; height: 6px;"></div>
+                                                    </td>
+                                                    <td>{{node.hostid}}<div style="width: 100px; height: 6px;"></div></td>
+                                                    <td>{{node.originalIp.ipaddr}}<div style="width: 100px; height: 6px;"></div></td>
+                                                    <td>{{node.originalIp.netmask}}<div style="width: 100px; height: 6px;"></div></td>
+
+                                                    <!--om_bussiness-->
+                                                    <td width="200px" ng-click="selectCell(node.nics, 'om_bussiness')"
+                                                        ng-show="isConfigNetworkNics(networks_config, 'om_bussiness')">
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-toggle autoHideText" data-toggle="dropdown" style="width:200px;">&nbsp;{{node.nics | selectedToStr:'om_bussiness'}}</div>
+                                                            <div class="inline-table dropdown-menu top-arrow-2" role="menu" aria-labelledby="dLabel" ng-stop-dropdown>
+                                                                <i></i>
+                                                                <table>
+                                                                    <tbody>
+                                                                        <tr ng-repeat="obj in selectArr" ng-click="selectRadio(obj, 'om_bussiness')">
+                                                                            <td>&nbsp;</td>
+                                                                            <td>
+                                                                                <input type="radio" ng-checked="obj.selected && obj.network=='om_bussiness'">
+                                                                            </td>
+                                                                            <td>&nbsp;{{obj.name}}</td>
+                                                                            <td>&nbsp;{{obj.mac}}&nbsp;</td>
+                                                                            <td style="min-width: 35px;">状态</td>
+                                                                            <td>
+                                                                                <span style="color: green;" ng-show="obj.status == 'OK'">{{obj.status}}&nbsp;</span>
+                                                                                <span style="color: red;" ng-show="obj.status != 'OK'">{{obj.status}}&nbsp;</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <!--bussiness-->
+                                                    <td width="120px" ng-show="isConfigNetworkIpaddr(networks_config, 'bussiness')">
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-toggle" data-toggle="dropdown" style="width:120px;">&nbsp;{{node.bussinessIP.ipaddr}}</div>
+                                                            <div class="dropdown-menu dropdown-dropdown-input" role="menu" aria-labelledby="dLabel">
+                                                                <input type="text" ng-model="node.bussinessIP.ipaddr">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td width="120px" ng-show="isConfigNetworkIpaddr(networks_config, 'bussiness')">
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-toggle" data-toggle="dropdown" style="width:130px;">&nbsp;{{node.bussinessIP.netmask}}</div>
+                                                            <div class="dropdown-menu dropdown-dropdown-input" role="menu" aria-labelledby="dLabel">
+                                                                <input type="text" ng-model="node.bussinessIP.netmask">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td width="120px" ng-show="isConfigNetworkGateway(networks_config, 'bussiness')">
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-toggle" data-toggle="dropdown" style="width:120px;">&nbsp;{{node.bussinessIP.gateway}}</div>
+                                                            <div class="dropdown-menu dropdown-dropdown-input" role="menu" aria-labelledby="dLabel">
+                                                                <input type="text" ng-model="node.bussinessIP.gateway">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td width="200px" ng-show="isConfigNetworkNics(networks_config, 'bussiness')"
+                                                        ng-click="selectCell(node.nics, 'bussiness')">
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-toggle autoHideText" data-toggle="dropdown" style="width:200px;">
+                                                                &nbsp;{{node.nics | selectedToStr:'bussiness'}}
+                                                            </div>
+                                                            <div class="inline-table dropdown-menu top-arrow-2" role="menu" aria-labelledby="dLabel" ng-stop-dropdown>
+                                                                <i></i>
+                                                                <table>
+                                                                    <tbody>
+                                                                        <tr ng-repeat="obj in selectArr" ng-click="select(obj, 'bussiness')">
+                                                                            <td>&nbsp;</td>
+                                                                            <td>
+                                                                                <input type="checkbox" ng-checked="obj.selected && obj.network=='bussiness'">
+                                                                            </td>
+                                                                            <td>&nbsp;{{obj.name}}</td>
+                                                                            <td>&nbsp;{{obj.mac}}&nbsp;</td>
+                                                                            <td style="min-width: 35px;">状态</td>
+                                                                            <td>
+                                                                                <span style="color: green;" ng-show="obj.status == 'OK'">{{obj.status}}&nbsp;</span>
+                                                                                <span style="color: red;" ng-show="obj.status != 'OK'">{{obj.status}}&nbsp;</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <!--public-->
+                                                    <td width="120px" ng-show="isConfigNetworkIpaddr(networks_config, 'public')">
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-toggle" data-toggle="dropdown" style="width:120px;">&nbsp;{{node.publicIP.ipaddr}}</div>
+                                                            <div class="dropdown-menu dropdown-dropdown-input" role="menu" aria-labelledby="dLabel">
+                                                                <input type="text" ng-model="node.publicIP.ipaddr">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td width="120px" ng-show="isConfigNetworkIpaddr(networks_config, 'public')">
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-toggle" data-toggle="dropdown" style="width:130px;">&nbsp;{{node.publicIP.netmask}}</div>
+                                                            <div class="dropdown-menu dropdown-dropdown-input" role="menu" aria-labelledby="dLabel">
+                                                                <input type="text" ng-model="node.publicIP.netmask">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td width="120px" ng-show="isConfigNetworkGateway(networks_config, 'public')">
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-toggle" data-toggle="dropdown" style="width:120px;">&nbsp;{{node.publicIP.gateway}}</div>
+                                                            <div class="dropdown-menu dropdown-dropdown-input" role="menu" aria-labelledby="dLabel">
+                                                                <input type="text" ng-model="node.publicIP.gateway">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td width="200px" ng-show="isConfigNetworkNics(networks_config, 'public')"
+                                                        ng-click="selectCell(node.nics, 'public')">
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-toggle autoHideText" data-toggle="dropdown" style="width:200px;">&nbsp;{{node.nics | selectedToStr:'public'}}</div>
+                                                            <div class="inline-table dropdown-menu top-arrow-2" role="menu" aria-labelledby="dLabel" ng-stop-dropdown>
+                                                                <i></i>
+                                                                <table>
+                                                                    <tbody>
+                                                                        <tr ng-repeat="obj in selectArr" ng-click="select(obj, 'public')">
+                                                                            <td>&nbsp;</td>
+                                                                            <td>
+                                                                                <input type="checkbox" ng-checked="obj.selected && obj.network=='public'">
+                                                                            </td>
+                                                                            <td>&nbsp;{{obj.name}}</td>
+                                                                            <td>&nbsp;{{obj.mac}}&nbsp;</td>
+                                                                            <td style="min-width: 35px;">状态</td>
+                                                                            <td>
+                                                                                <span style="color: green;" ng-show="obj.status == 'OK'">{{obj.status}}&nbsp;</span>
+                                                                                <span style="color: red;" ng-show="obj.status != 'OK'">{{obj.status}}&nbsp;</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <!--cluster-->
+                                                    <td width="130px" ng-show="isConfigNetworkIpaddr(networks_config, 'cluster')">
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-toggle" data-toggle="dropdown" style="width:130px;">&nbsp;{{node.clusterIP.ipaddr}}</div>
+                                                            <div class="dropdown-menu dropdown-dropdown-input" role="menu" aria-labelledby="dLabel">
+                                                                <input type="text" ng-model="node.clusterIP.ipaddr">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td width="130px" ng-show="isConfigNetworkIpaddr(networks_config, 'cluster')">
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-toggle" data-toggle="dropdown" style="width: 130px;">&nbsp;{{node.clusterIP.netmask}}</div>
+                                                            <div class="dropdown-menu dropdown-dropdown-input" role="menu" aria-labelledby="dLabel">
+                                                                <input type="text" ng-model="node.clusterIP.netmask">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td width="200px"  ng-show="isConfigNetworkNics(networks_config, 'cluster')"
+                                                        ng-click="selectCell(node.nics, 'cluster')">
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-toggle autoHideText" data-toggle="dropdown" style="width: 200px;">&nbsp;{{node.nics | selectedToStr:'cluster'}}</div>
+                                                            <div class="inline-table dropdown-menu top-arrow-2" role="menu" aria-labelledby="dLabel" ng-stop-dropdown>
+                                                                <i></i>
+                                                                <table>
+                                                                    <tbody>
+                                                                        <tr ng-repeat="obj in selectArr" ng-click="select(obj, 'cluster')">
+                                                                            <td>&nbsp;</td>
+                                                                            <td>
+                                                                                <input type="checkbox" ng-checked="obj.selected && obj.network=='cluster'"/>
+                                                                            </td>
+                                                                            <td>&nbsp;{{obj.name}}</td>
+                                                                            <td>&nbsp;{{obj.mac}}&nbsp;</td>
+                                                                            <td style="min-width: 35px;">状态</td>
+                                                                            <td>
+                                                                                <span style="color: green;" ng-show="obj.status == 'OK'">{{obj.status}}&nbsp;</span>
+                                                                                <span style="color: red;" ng-show="obj.status != 'OK'">{{obj.status}}&nbsp;</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td width="250px" ng-click="selectCell(node.disks)">
+                                                        <div style="width: 150px; display: inline-block;">
+                                                            <div class="dropdown">
+                                                                <div class="dropdown-toggle autoHideText" data-toggle="dropdown" style="width: 150px;">
+                                                                    ({{node.disks | selectedDisksNum2}}/{{node.disks.length}})
+                                                                    &nbsp;{{node.disks | selectedToStr3}}
+                                                                </div>
+                                                                <div class="inline-table dropdown-menu top-arrow-2" role="menu" aria-labelledby="dLabel" ng-stop-dropdown>
+                                                                    <i></i>
+                                                                    <table>
+                                                                        <tbody>    <!-- ng-click="selectDisks(disk, 'osddisk', node)" -->
+                                                                            <tr ng-repeat="disk in selectArr" ng-click="selectDisksRadio(disk)">
+                                                                                <td>&nbsp;</td>
+                                                                                <td>
+                                                                                    <!-- <input type="checkbox" ng-checked="disk.selected && disk.purpose=='osddisk'"> -->
+                                                                                    <input type="radio" ng-checked="disk.selected">
+                                                                                </td>
+                                                                                <td>&nbsp;{{disk.name}}&nbsp;</td>
+                                                                                <td style="min-width: 35px;">类型</td>
+                                                                                <td>{{disk.type}}&nbsp;</td>
+                                                                                <td style="min-width: 100px;">容量 {{disk.capacity/1024 | GBorTB}}</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div style="width: 95px; display: inline-block; text-align: left;">
+                                                            <div class="dropdown">
+                                                                <div class="dropdown-toggle autoHideText" data-toggle="dropdown" style="width: 150px;">
+                                                                    &nbsp;{{node.disks | disksUseTypeFilter}}
+                                                                </div>
+                                                                <div class="inline-table dropdown-menu top-arrow-2" role="menu" aria-labelledby="dLabel" ng-stop-dropdown>
+                                                                    <i></i>
+                                                                    <table>
+                                                                        <tbody>
+                                                                            <tr ng-click="selectDiskWay('disk')">
+                                                                                <td>&nbsp;</td>
+                                                                                <td>
+                                                                                    <input type="radio" name="useDiskWay" ng-checked="(selectArr | disksUseTypeChecked) == '1'"/>
+                                                                                </td>
+                                                                                <td style="min-width: 40px;">全盘</td>
+                                                                            </tr>
+                                                                            <tr ng-click="selectDiskWay('partition')">
+                                                                                <td>&nbsp;</td>
+                                                                                <td>
+                                                                                    <input type="radio" name="useDiskWay" ng-checked="(selectArr | disksUseTypeChecked) == '0'"/>
+                                                                                </td>
+                                                                                <td style="min-width: 40px;">分区</td>
+                                                                                <td>
+                                                                                    <input type="text" style="width: 30px; height: 15px;" ng-keyup="assignmentPartition($event)"/>
+                                                                                </td>
+                                                                                <td style="min-width: 40px;">GB</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td width="150px" ng-show="!isReadWriteCacheMix" ng-click="selectCell(node.disks)">
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-toggle autoHideText" data-toggle="dropdown" style="width: 150px;">
+                                                                ({{node.disks | selectedDisksNum:'writecache'}}/{{node.disks.length}})
+                                                                &nbsp;{{node.disks | selectedToStr2:'writecache'}}
+                                                            </div>
+                                                            <div class="inline-table dropdown-menu top-arrow-2" role="menu" aria-labelledby="dLabel" ng-stop-dropdown>
+                                                                <i></i>
+                                                                <table>
+                                                                    <tbody>
+                                                                        <tr ng-repeat="disk in selectArr" ng-click="selectDisks(disk, 'writecache', node)">
+                                                                            <td>&nbsp;</td>
+                                                                            <td>
+                                                                                <input type="checkbox" ng-checked="disk.selected && disk.purpose=='writecache'" id="{{disk.wwid + 'writecache'}}">
+                                                                            </td>
+                                                                            <td>&nbsp;{{disk.name}}&nbsp;</td>
+                                                                            <td style="min-width: 35px;">类型</td>
+                                                                            <td>{{disk.type}}&nbsp;</td>
+                                                                            <td style="min-width: 100px;">容量 {{disk.capacity/1024 | GBorTB}}</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td width="150px" ng-show="!isReadWriteCacheMix" ng-click="selectCell(node.disks)">
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-toggle autoHideText" data-toggle="dropdown" style="width: 150px;">
+                                                                ({{node.disks | selectedDisksNum:'readcache'}}/{{node.disks.length}})
+                                                                &nbsp;{{node.disks | selectedToStr2:'readcache'}}
+                                                            </div>
+                                                            <div class="inline-table dropdown-menu top-arrow-2" role="menu" aria-labelledby="dLabel" ng-stop-dropdown>
+                                                                <i></i>
+                                                                <table>
+                                                                    <tbody>
+                                                                        <tr ng-repeat="disk in selectArr" ng-click="selectDisks(disk, 'readcache', node)">
+                                                                            <td>&nbsp;</td>
+                                                                            <td>
+                                                                                <input type="checkbox" ng-checked="disk.selected && disk.purpose=='readcache'" id="{{disk.wwid + 'readcache'}}">
+                                                                            </td>
+                                                                            <td>&nbsp;{{disk.name}}&nbsp;</td>
+                                                                            <td style="min-width: 35px;">类型</td>
+                                                                            <td>{{disk.type}}&nbsp;</td>
+                                                                            <td style="min-width: 100px;">容量 {{disk.capacity/1024 | GBorTB}}</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td width="150px">
+                                                        <div style="width: 150px; display: inline-block;" ng-click="selectRackCell(node)">
+                                                            <div class="dropdown">
+                                                                <div class="dropdown-toggle autoHideText" data-toggle="dropdown" style="width: 150px;">
+                                                                    &nbsp;{{node.rackInfo.rackSerial}}
+                                                                </div>
+                                                                <div class="inline-table dropdown-menu top-arrow-2" role="menu" aria-labelledby="dLabel" ng-stop-dropdown>
+                                                                    <i></i>
+                                                                    <table>
+                                                                        <tbody>    <!-- ng-click="selectDisks(disk, 'osddisk', node)" -->
+                                                                            <tr ng-repeat="rack in rackData" ng-click="selectRack(rack)">
+                                                                                <td>&nbsp;</td>
+                                                                                <td>
+                                                                                    <input type="radio" ng-checked="rack.selected">
+                                                                                </td>
+                                                                                <td style="min-width: 130px;">{{rack.name}}</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <div>
+                                                                        <sapn style="margin: 10px; float: left;">
+                                                                            <input type="text" style="width: 90px; height: 22px;" 
+                                                                                id="{{node.originalIp.ipaddr.slice(node.originalIp.ipaddr.lastIndexOf('.')+1)}}Rack" /></sapn>
+                                                                        <span style="float: left; margin-top: 5px;">
+                                                                            <i class="ipAdd" ng-click="createSingleRack(node.originalIp.ipaddr)"></i>
+                                                                        </span>
+                                                                    </div>
+                                                                    <div style="float: left; margin-left: 15px; color: red;" name="createRackError">{{createRackError}}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td width="90px">
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-toggle ng-binding" data-toggle="dropdown" style="width:90px;" aria-expanded="true">&nbsp;{{node.rackInfo.pos_in_rack}}</div>
+                                                            <div class="dropdown-menu dropdown-dropdown-input" role="menu" aria-labelledby="dLabel">
+                                                                <input type="text" ng-model="node.rackInfo.pos_in_rack" class="ng-pristine ng-valid ng-not-empty ng-touched" style="width:90px;">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr style="height: 160px;"></tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div style="position: absolute; bottom: 0; height: 20px; width: 100%;">
+                                    已选：{{num}}   共计：{{nodeObj.physical_pool.install_info.servers.length}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div style="padding-right: 45px;" ng-show="!isScanning">
+                    <button class="btn btn-success" ng-click="checkAndcreateCluster()" ng-disabled="disablecreate">创建</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模板 -->
+    <!-- 提示创建成功模板 -->
+    <div id="complete" class="modal fade" style="top: 40%; margin-top: -150px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width:400px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a href="http://{{nodeObj.cluster.omBussinessIpaddr}}:6680/">
+                        <button type="button" class="close" aria-hidden="true">×</button>
+                    </a>
+                    <h4 class="modal-title modal-title-font">提示</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body-padding">
+                        <span class="text-success fontSize18 fontWidth600">创建成功</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="http://{{nodeObj.cluster.omBussinessIpaddr}}:6680/">
+                        <button class="btn btn-success">&nbsp;确定&nbsp;</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="AlertInfo" class="modal fade" style="top: 40%; margin-top: -150px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width:680px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title modal-title-font">创建失败提示</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body-padding">
+                        <p ng-bind="DialogInfo"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">
+                        关闭
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="LogShow" class="modal fade" style="top: 40%; margin-top: -150px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width:400px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title modal-title-font">{{now_show_log}} 节点安装日志</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body-padding">
+                        <p id="LogRecorder" ng-bind-html="showInstallLogRecorder | to_trusted"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">
+                        关闭
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--磁盘wwid冲突弹出框-->
+    <div id="alertDiskWwidEqual" class="modal fade" style="top:20%;width:500px;margin:auto;"
+    tabindex="-1" role="dialog"  aria-hidden="true">
+        <div class="modal-header" style="font-size:15px;">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                ×
+            </button>
+            <h4 class = "modal-title modal-title-font">
+                提示
+            </h4>
+        </div>
+        <div class="modal-body" style="background-color:#fff;padding:20px 50px;color:#000000;">
+            <div class="fontSize16" style="color:#000; word-break:break-all;">
+            节点&nbsp;<test style="color:#f00;">{{wwidEqualServer[0].hostid}}</test>磁盘<test style="color:#f00;">{{wwidEqualServer[0].name}}</test>WWID&nbsp;与节点&nbsp;<test style="color:#f00;">{{wwidEqualServer[1].hostid}}</test>磁盘<test style="color:#f00;">{{wwidEqualServer[1].name}}</test>存在冲突，请检查环境，消除冲突后继续!
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">
+                关闭
+            </button>
+        </div>
+    </div>
+
+    <!--节点时间配置界面-->
+    <div id="alertTimeDrift" class="modal fade" style="top: 40%; margin-top: -150px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title modal-title-font">提示</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body-padding">
+                        <p ng-bind="DialogInfo"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" ng-click="showTimeManagementBox()">&nbsp;继续&nbsp;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--缓存盘大小不一致弹出框-->
+    <div id="alertDiskSize" class="modal fade" style="top:20%;width:500px;margin:auto;"
+    tabindex="-1" role="dialog"  aria-hidden="true">
+        <div class="modal-header" style="font-size:15px;">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                ×
+            </button>
+            <h4 class = "modal-title modal-title-font">
+                提示
+            </h4>
+        </div>
+        <div class="modal-body" style="background-color:#fff;padding:20px 50px;color:#000000;">
+            <p ng-bind="DiskSizeDiffInfo"></p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">
+                关闭
+            </button>
+        </div>
+    </div>
+
+    <div id="timeManagement" class="modal fade" style="top: 33%; margin-top: -150px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title modal-title-font">节点时间管理</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="width: 100%; max-height: 28em; overflow-y: auto;">
+                        <table class="table table-bordered" style="border: 2px #98CDFF solid;">
+                            <tr style="background-color: #D6E8FA;">
+                                <td style="width: 20%; text-align: center;">
+                                    节点IP地址
+                                </td>
+                                <td style="width: 40%; text-align: center;">
+                                    扫描时间 <img src="images/configure/pic_refresh.png" ng-click="refreshTimeInfo(true)" style="cursor:pointer;width:16px;height:16px;">
+                                </td>
+
+                                <td style="width: 40%; text-align: center;">
+                                    操作
+                                </td>
+                            </tr>
+
+                            <tr ng-repeat="server in nodeObj.physical_pool.install_info.servers">
+                                <td style="width: 20%; text-align: center;">
+                                    {{server.originalIp.ipaddr}}
+                                </td>
+                                <td style="width: 40%; text-align: center;">
+                                    {{server.humanCheckTime}}
+                                </td>
+                                <td style="width: 40%; text-align: center; cursor:pointer;">
+                                    <span style="color:#4bd37e;" ng-click="showSetNodeTime(server)" role="button">修改</span>
+                                    <span> |</span>
+                                    <span style="color:#A0522D;" ng-click="showConfirmSyncTimeDialog(server)" role="button" >同步</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="timeConfigNoticeMessage" ng-bind="timeConfigNoticeMessage" style="text-align:left;font-size:16px;color:red;">
+                        <span style="float:right" ng-show="(showSetTimeProccessing)">&nbsp;<img src="images/configure/loading.gif"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" ng-click="closeTimeManagementBox()">&nbsp;关闭&nbsp;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 操作系统不支持Modal -->
+    <div id="osSupport" class="modal fade" style="top: 45%;margin-top: -235px;"
+         tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                            ng-click="osSupportCancel()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title modal-title-font" id="diskReplace">警告</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="padding: 10px 30px;">
+                        <p>
+                            <label>节点 {{osSupportShowObj.hostid}} 内核版本为: {{osSupportShowObj.versionName}}</label>
+                        </p>
+                        <p ng-hide="osSupportShowObj.maxVersionSupport == '0'">
+                            <label>暂不支持该内核版本!是否要继续设置{{osSupportShowObj.diskName}}作为缓存盘?</label>
+                        </p>
+                        <p ng-hide="osSupportShowObj.maxVersionSupport == '1'">
+                            <label>暂不支持该内核版本!</label>
+                        </p>
+                        <br/>
+                        <label>所支持内核版本列表如下:</label>
+                        <div ng-repeat="kernelVersion in osSupportShowObj.kernelVersionSupportList">
+                            <label>{{kernelVersion}}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" ng-click="osSupportClick()"
+                            ng-disabled="osSupportShowObj.maxVersionSupport == '0' ">
+                        继续
+                    </button>
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true"
+                            ng-click="osSupportCancel()">取消
+                    </button>
+                </div>
+             </div>
+        </div>
+    </div>
+ </div>
+
+    <!--节点时间同步确认对话框-->
+    <div id="syncConfirmDialog" class="modal fade" style="top: 40%; margin-top: -150px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title modal-title-font">节点时间同步确认</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body-padding">
+                        <span> 点击确认，将以节点{{ntpserver.originalIp.ipaddr}}的时间为标准，同步所有节点时间！</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" ng-click="syncServersTime()">&nbsp;确定&nbsp;</button>
+                    <button type="button" class="btn btn-default" ng-click="closeConfirmSyncTimeDialog()" ng-disabled="isAdd">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--节点时间同步操作管理-->
+    <div id="nodeTimeSet" class="modal fade" style="top: 40%; margin-top: -150px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title modal-title-font">节点时间设置</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body-padding">
+                        <p><label>节点地址：</label> {{nodeToChangeTime.originalIp.ipaddr}}</p>
+                        <p><label>扫描时间：</label> {{nodeToChangeTime.humanCheckTime}}</p>
+                        <p>
+                            <label>更新时间：</label>
+                            <input class="form-control" type="text" ng-model="newSystemTime" style="width: 250px; display: inline-block;" />
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" ng-click="updateNodeTime()" ng-disabled="isAdd">保存</button>
+                    <button type="button" class="btn btn-default" ng-click="closeNodeTimeSet()" ng-disabled="isAdd">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalDialogView" class="modal fade" style="top: 30%; margin-top: -150px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title modal-title-font">{{modal.message}}</h4>
+                    <div style="margin-left:110px;margin-top:-25px;width:20px;height:20px;" ng-click="showFeatureSelected()"></div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body-padding">
+                        <form ng-show="modal.to=='advancedOption'">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td>交换机配置端口聚合</td>
+                                        <td>
+                                            <input type="radio" value="0" ng-model="nodeObj.cluster.bondingMode" style="margin-left:10px;"/>
+                                            <a title="优点：网络负载均衡性更好，性能最优&nbsp;&nbsp;缺点：需要配置交换机做端口聚合">
+                                                是，网卡绑定采用模式0
+                                            </a>
+                                            <br/>
+                                            <input type="radio" value="6" ng-model="nodeObj.cluster.bondingMode" style="margin-left:10px;"/>
+                                            <a title="优点：不需要对交换机进行配置&nbsp;&nbsp;缺点：网络负载均衡性稍差，性能稍差" >
+                                                否，网卡绑定采用模式6
+                                            </a>
+                                            <br/>
+                                            <input type="radio" value="1" ng-model="nodeObj.cluster.bondingMode" style="margin-left:10px;"/>
+                                            <a title="优点：不需要对交换机进行配置&nbsp;&nbsp;缺点：未使用负载均衡策略，性能比较差" >
+                                                否，网卡绑定采用模式1
+                                            </a>
+                                            <br/>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="nodeObj.installer.disk_manager == 'lvm'">
+                                        <td> 读写共用缓存盘 </td>
+                                        <td>
+                                            <input type="radio" value="1" ng-model="nodeObj.cluster.isReadWriteCacheMix"
+                                                ng-click="readWriteCacheMixChanged(1)"  style="margin-left:10px;"/>
+                                            <a title="">是</a>
+                                            <input type="radio" value="0" ng-model="nodeObj.cluster.isReadWriteCacheMix"
+                                                ng-click="readWriteCacheMixChanged(0)"  style="margin-left:10px;"/>
+                                            <a title="">否</a>
+                                        </td>
+                                    </tr>
+                                    <!-- rollback rbd thick
+                                    <tr>
+                                        <td> 允许瘦分配 </td>
+                                        <td>
+                                            <input type="radio" value="1" ng-model="nodeObj.cluster.thinAssign" style="margin-left:10px;"/>
+                                            <a title="允许创建的LUN/块设备总容量大于集群总容量">是</a>
+                                            <input type="radio" value="0" ng-model="nodeObj.cluster.thinAssign" style="margin-left:10px;"/>
+                                            <a title="不允许创建的LUN/块设备总容量大于集群总容量">否</a>
+                                        </td>
+                                    </tr>
+                                    -->
+                                    <tr>
+                                        <td>磁盘替换模式</td>
+                                        <td>
+                                            <input type="radio" value="auto" ng-model="nodeObj.cluster.diskReplaceMode"
+                                                ng-disabled="nodeObj.cluster.application.jzgk.selected == 1" style="margin-left:10px;" />
+                                            <a title="当系统发现有磁盘被拔出并且有新的磁盘插入时，会自动使用新盘替换">自动</a>
+                                            <input type="radio" value="manual" ng-model="nodeObj.cluster.diskReplaceMode"
+                                                ng-disabled="nodeObj.cluster.application.jzgk.selected == 1" style="margin-left:10px"/>
+                                            <a title="由管理员手动选择用于替换的磁盘和被替换的磁盘">手动</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>节点名称前缀</td>
+                                        <td>
+                                            <input class="form-control"  type="text" style="margin-bottom:0px" id="nodeNamePrefix" ng-model="nodeObj.cluster.nodeNamePrefix"
+                                                placeholder="仅支持以英文字母，长度为1-12"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>应用场景</td>
+                                        <td>
+                                            <select class="form-control" style="margin-bottom:0px" ng-model="appSelectValue" ng-change="appSelect()">
+                                                <option value="0">支持iSCSI协议</option>
+                                                <option value="2">不支持iSCSI协议</option>
+                                                <option value="3" ng-show="showAdvancedOption">对象存储</option>
+                                                <option value="1" ng-show="showAdvancedOption">与集中管控对接</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>网络配置</td>
+                                        <td>
+                                            <select class="form-control" style="margin-bottom:0px" ng-model="netwokModeSelectValue" ng-change="netwokModeSelect()">
+                                                <option value="0" ng-show="appSelectValue == 0">iSCSI网络使用独立网卡</option>
+                                                <option value="1" ng-show="appSelectValue == 0">iSCSI网络与内部网络共用网卡</option>
+                                                <option value="2" ng-show="appSelectValue == 2 || appSelectValue == 3">存储服务网络使用独立网卡</option>
+                                                <option value="3" ng-show="appSelectValue == 2 || appSelectValue == 3">存储服务网络与内部网络共用网卡和IP地址</option>
+                                                <option value="4" ng-show="appSelectValue == 1">OM与iSCSI网络共用网卡</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="nodeObj.cluster.application.jzgk.selected == 1">
+                                        <td for="datasize" >集中管控数据盘(MB)</td>
+                                        <td>
+                                            <input class="form-control" type="text" style="margin-bottom:0px" id="datasize" ng-model="nodeObj.cluster.application.jzgk.datasize"/>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="nodeObj.cluster.application.jzgk.selected == 1">
+                                        <td for="dbsize" >集中管控DB盘(MB)</td>
+                                        <td>
+                                            <input class="form-control" type="text" style="margin-bottom:0px" id="dbsize" ng-model="nodeObj.cluster.application.jzgk.dbsize"/>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="showAdvancedOption">
+                                        <td>
+                                            <label class="span2" >启用EC</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" value="1" name="erasureCode" id="erasureCode" ng-model="nodeObj.cluster.policy.erasureCode" style="margin-left:10px;"/>
+                                            <a >是</a>
+                                            <input type="radio" value="0" name="erasureCode" id="erasureCode" ng-model="nodeObj.cluster.policy.erasureCode" style="margin-left:10px;"/>
+                                            <a >否</a>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="showAdvancedOption && nodeObj.installer.disk_manager == 'lvm'" >
+                                        <td>
+                                            <label class="span2" for="journalNum" style="color:black;float:left;">日志分区</label>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text" id="journalNum" style="width: 80px;margin-bottom:0px;" ng-model="nodeObj.cluster.osdJournalNum"/>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="showAdvancedOption" >
+                                        <td> 启用磁盘写加速 </td>
+                                        <td>
+                                            <input type="radio" value="1" ng-model="nodeObj.cluster.isSdsCacheWB" style="margin-left:10px;"/>
+                                            <a >是</a>
+                                            <input type="radio" value="0" ng-model="nodeObj.cluster.isSdsCacheWB" style="margin-left:10px;"/>
+                                            <a >否</a>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="showAdvancedOption" >
+                                        <td>
+                                            <label class="span2" >启用副本加速</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" value="1" ng-model="nodeObj.cluster.osdReplicateMode" style="margin-left:10px;"/>
+                                            <a >是</a>
+                                            <input type="radio" value="0" ng-model="nodeObj.cluster.osdReplicateMode" style="margin-left:10px;"/>
+                                            <a >否</a>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="showAdvancedOption" >
+                                        <td>
+                                            <label class="span2" >OSD文件系统</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" value="xfs" ng-model="nodeObj.cluster.osdFilesystem" style="margin-left:10px;"/>
+                                            <a >xfs</a>
+                                            <input type="radio" value="ext4" ng-model="nodeObj.cluster.osdFilesystem" style="margin-left:10px;"/>
+                                            <a >ext4</a>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="showAdvancedOption" >
+                                        <td>
+                                        <label class="span2" >磁盘管理方式</label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" value="partition" ng-model="nodeObj.installer.disk_manager"
+                                                    ng-click="readWriteCacheMixChanged(1)" style="margin-left:10px;"/>
+                                            <a >Partition</a>
+                                            <input type="radio" value="lvm" ng-model="nodeObj.installer.disk_manager" style="margin-left:10px;"/>
+                                            <a >Lvm</a>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                    <!-- 加载中 -->
+                    <div class="spin"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建 Rack -->
+    <div id="createRackModal" class="modal fade" style="top: 28%; margin-top: -150px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="widht: 750px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title modal-title-font">创建Rack</h4>
+                    <div style="margin-left:110px;margin-top:-25px;width:20px;height:20px;" ng-click="showFeatureSelected()"></div>
+                </div>
+                <div class="modal-body">
+                    <form role="form">
+                        <div style="float: right; color: red;" id="createRackError">{{createRackError}}</div>
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <div class="form-group">
+                                    <label for="rackName">Rack名称</label>
+                                    <input type="text" id="rackName" class="form-control" ng-model="rackName" placeholder="请输入Rack名称">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ms-container" id="msContainer">
+                            <div class="ms-selectable">
+                                可选节点
+                                <ul class="ms-list">
+                                    <li class="ms-elem-selectable half" ng-repeat="node in nodeObj.physical_pool.install_info.servers" ms-value="{{$index}}">
+                                        {{node.originalIp.ipaddr}}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="ms-selection">
+                                已选节点
+                                <ul class="ms-list">
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" ng-click="createRack()">创建</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 创建 Rack END -->
+
+    <!-- 管理 Rack -->
+    <div id="manageRackModal" class="modal fade" style="top: 30%; margin-top: -150px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title modal-title-font">管理Rack</h4>
+                    <div style="margin-left:110px;margin-top:-25px;width:20px;height:20px;" ng-click="showFeatureSelected()"></div>
+                </div>
+                <div class="modal-body">
+                    <form role="form">
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <div class="form-group">
+                                    <label for="rackName">Rack名称</label>
+                                    <select class="form-control" ng-model="manageRackStore.name"
+                                            ng-options="rack as rack.name for rack in rackData">
+                                        <option value="">--请选择Rack名称--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <div class="form-group">
+                                    <label for="updateName">修改Rack名称</label>
+                                    <input type="text" class="form-control" ng-model="manageRackStore.updateName"
+                                        id="updateName" placeholder="请输入Rack名称">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="rackName">已选节点</label>
+                                    <ul class="manageRack-ul">
+                                        <li ng-repeat="node in manageRackStore.name.ip">{{node}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" ng-click="manageRack()">确定</button>
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 管理 Rack END -->
+</div>

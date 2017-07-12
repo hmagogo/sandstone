@@ -1,0 +1,194 @@
+<div class="row" ng-init="init()" style="height: 25%;">
+    <!--节点数-->
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 sds-frame-padding">
+        <div class="sds-frame move-highlights" id="sdsFrameReferenceHeightId">
+          <div class="half height12">
+            <div class="halfLeft2 height12">
+                <div class="fontSize12 height3">&nbsp;</div>
+              <div class="fontSize36 hight_light_font_color height5">{{poolCount}}</div>
+              <div class="fontSize14 height4">存储池数量</div>
+            </div>
+          </div>
+          <!-- 分隔线 -->
+            <div class="solid" ng-style="middleSolidStyle"></div>
+          <div class="half height12">
+            <div class="halfLeft2 height12">
+                <div class="fontSize12 height3">&nbsp;</div>
+              <div class="fontSize36 hight_light_font_color height5">{{volumeCount}}</div>
+              <div class="fontSize14 height4">卷数量</div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <!--磁盘总数-->
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 sds-frame-padding">
+        <div class="sds-frame move-highlights">
+          <div class="half height12">
+            <div class="halfLeft2 height12">
+                <div class="fontSize12 height3">&nbsp;</div>
+              <div class="fontSize36 hight_light_font_color height5">{{hardwareSummary.nodeCount}}</div>
+              <div class="fontSize14 height4">节点数</div>
+            </div>
+          </div>
+            <div class="solid" ng-style="middleSolidStyle"></div>
+          <div class="half padding0_13 height12">
+              <div class="halfRight height12">
+                  <div class="fontSize14 height5"></div>
+                 <div class="fontSize14 height3">
+                    <span>固态硬盘</span>
+                    <span class="floatRight hight_light_font_color ">{{hardwareSummary.ssdCount}}个</span>
+                </div>
+              <div class="fontSize14 height3">
+                  <span>机械硬盘</span>
+                  <span class="floatRight hight_light_font_color ">{{hardwareSummary.hddCount}}个</span>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <!--风险度-->
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 sds-frame-padding">
+        <div class="sds-frame move-highlights">
+          <div class="half height12">
+            <div class="halfLeft2 height12">
+                <div class="fontSize14 height3" style="text-align: left;">
+                    <span class="badge ng-binding main_bg_red" ng-show="gAlarm.unresume.critical != 0">{{gAlarm.unresume.critical}}</span>
+                    <span class="badge ng-binding main_bg_yellow" ng-show="gAlarm.unresume.warning != 0">{{gAlarm.unresume.warning}}</span>
+                </div>
+              <div class="fontSize36 hight_light_font_color height5">{{gAlarm.risk}}</div>
+              <div class="fontSize14 height4">风险度</div>
+            </div>
+          </div>
+            <div class="solid" ng-style="middleSolidStyle"></div>
+          <div class="half padding0_13 height12">
+              <div class="halfRight height12">
+                  <div class="fontSize14 height3"></div>
+                <div class="fontSize14 height3">
+                  <span>节点总数</span>
+                  <span class="floatRight hight_light_font_color ">{{hardwareNode.total}}</span>
+                </div>
+                <div class="fontSize14 height3">
+                  <span>正常节点数</span>
+                  <span class="floatRight hight_light_font_color ">{{hardwareNode.up}}</span>
+                </div>
+                <div class="fontSize14 height3">
+                  <span>故障节点数</span>
+                  <span class="floatRight hight_light_font_color ">{{hardwareNode.down}}</span>
+                </div>
+              </div>
+          </div>
+        </div>
+    </div>
+</div>
+<div class="row"  style="height: 75%;">
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="height: 100%;">
+        <div class="row" style="height:33.3333%;">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 sds-frame-padding">
+                <div class="sds-frame move-highlights">
+                    <div class="height3">
+                      系统CPU使用率
+                    </div>
+                    <div class="width100 height9" style="text-align:center;">
+                        <div class="fontSize12 height2">&nbsp;</div>
+                      <div class="fontSize36 hight_light_font_color height6 inlineCenter">{{hardwareSummary.cpu.used_percent}}%</div>
+                      <div class="fontSize12 height4">OF {{hardwareSummary.cpu.total_mhz | mhz2Ghz}} GHz</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 sds-frame-padding">
+                <div class="sds-frame move-highlights">
+                    <div class="height3">
+                      系统内存使用率
+                    </div>
+                    <div class="width100 height9" style="text-align:center;">
+                        <div class="fontSize12 height2">&nbsp;</div>
+                      <div class="fontSize36 hight_light_font_color height6 inlineCenter">{{hardwareSummary.memory.used_percent}}%</div>
+                      <div class="fontSize12 height4">OF {{hardwareSummary.memory.total_bytes | BytesToKMGTB}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--TOP3节点节点资源使用率-->
+        <div class="row" style="height:33.3333%;">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 sds-frame-padding">
+                <div class="sds-frame move-highlights">
+                  <div class="height3">TOP3节点CPU使用率</div>
+                  <div class="padding0_13 width100 height3" ng-repeat="node in cpuTop3">
+                    <span class="floatLeft" style="color:#000;">{{node.nodeIp}}</span>
+                    <span class="floatRight hight_light_font_color ">{{node.cpu | unit:'cpu'}}</span>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <!--TOP3节点IOPS-->
+        <div class="row" style="height:33.3333%;">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 sds-frame-padding">
+            <div class="sds-frame move-highlights">
+              <div class="height3">TOP3节点IOPS</div>
+              <div class="padding0_13 width100 height3" ng-repeat="node in iopsTop3">
+                <span class="floatLeft" style="color:#000;">{{node.nodeIp}}</span>
+                <span class="floatRight hight_light_font_color ">{{node.iops | unit:'iops'}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="height: 100%;">
+        <div class="row" style="height: 66.6666%;">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 sds-frame-padding">
+                <div class="sds-frame move-highlights">
+                    <div class="height3" style="position: absolute;">
+                        节点容量使用占比
+                    </div>
+                    <div id="capacityNodeDisk" class="height12" style="width:100%;float:left;"></div>
+                </div>
+            </div>
+        </div>
+        <!--TOP3节点带宽-->
+        <div class="row" style="height: 33.3333%;">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 sds-frame-padding">
+                <div class="sds-frame move-highlights">
+                  <div class="height3">
+                    TOP3节点MBPS
+                  </div>
+                  <div class="padding0_13 width100 height3" ng-repeat="node in mbpsTop3">
+                    <span class="floatLeft" style="color:#000;">{{node.nodeIp}}</span>
+                    <span class="floatRight hight_light_font_color ">{{node.mbps | unit:'mbps'}}</span>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="height: 100%;">
+        <div class="row" style="height: 100%;">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 sds-frame-padding">
+                <div class="sds-frame move-highlights">
+                    <div style="height: 25px;">
+                      告警事件
+                    </div>
+                    <div class="height11" id="alarmItemListId">
+                        <div class="height12 fontSize12">
+                            <div ng-repeat="alarm in mainRightAlarmList">
+                                <div class="margin5_15 height12" >
+                                    <div ng-style="alarmItemLineStyle">
+                                        <div class="width5 floatLeft autoHideText" style="text-align: left;color:#000;" title="{{alarm.indexShow}}">{{alarm.indexShow}}</div>
+                                        <div class="floatLeft autoHideText" style="text-align: left; margin-left: 5%; width: 25%;" title="{{alarm.when | showTime}}">{{alarm.when | showTime}}</div>
+                                        <div class="floatRight greenColor width3 alarmResovledItem autoHideText" ng-click="goToAlarm()">
+                                            <span class="greenColor" ng-show="alarm.resolved == 1 && alarm.confirmed == 1">手工清除</span>
+                                            <span class="greenColor" ng-show="alarm.resolved == 1 && alarm.confirmed != 1">已修复&nbsp</span>
+                                            <span class="redColor" ng-hide="alarm.resolved == 1">未修复&nbsp</span>
+                                        </div>
+                                    </div>
+                                    <div class="grayColor autoHideText" title="{{alarm.description}}" ng-click="goToAlarm()"
+                                        ng-style="alarmItemLineStyle" style="text-align: left;cursor:pointer;border-bottom: 1px dotted #d9dada;">
+                                        {{alarm.description}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
